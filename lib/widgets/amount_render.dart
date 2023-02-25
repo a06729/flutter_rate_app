@@ -69,7 +69,9 @@ class _AmountRenderState extends State<AmountRender> {
                       maxLength: 13,
                       onTap: () {
                         showModalBottomSheet(
-                          backgroundColor: const Color(0xff181818),
+                          backgroundColor: theamController.darkMod
+                              ? const Color(0xff181818)
+                              : Color.fromARGB(255, 250, 222, 203),
                           context: context,
                           barrierColor: Colors.transparent,
                           builder: (context) {
@@ -80,7 +82,10 @@ class _AmountRenderState extends State<AmountRender> {
                                 ),
                                 ChangeNotifierProvider.value(
                                   value: rateCardController,
-                                )
+                                ),
+                                ChangeNotifierProvider.value(
+                                  value: theamController,
+                                ),
                               ],
                               child: Column(
                                 children: const [
