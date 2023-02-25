@@ -1,5 +1,6 @@
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
+import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/model/rateInfo/rateInfo.dart';
 import 'package:exchange_rate_app/widgets/country_selector_list.dart';
 import 'package:exchange_rate_app/widgets/keybord/customkeybord.dart';
@@ -17,6 +18,7 @@ class _AmountRenderState extends State<AmountRender> {
   late KeybordAmountController? keybordAmountController;
   late RateCardController? rateCardController;
   late TextEditingController _textController;
+  late TheamController theamController;
   late RateInfo? rateInfo;
 
   @override
@@ -26,6 +28,7 @@ class _AmountRenderState extends State<AmountRender> {
         Provider.of<KeybordAmountController>(context, listen: false);
     rateCardController =
         Provider.of<RateCardController>(context, listen: false);
+    theamController = Provider.of<TheamController>(context, listen: false);
     _textController = TextEditingController();
     rateInfo = RateInfo();
   }
@@ -48,84 +51,96 @@ class _AmountRenderState extends State<AmountRender> {
       color: Colors.grey,
     );
 
-    return Center(
-      child: Consumer<KeybordAmountController>(
-        builder: (context, value, child) {
-          _textController.text = keybordAmountController!.diplayValue;
-          return Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _textController,
-                  showCursor: false,
-                  autofocus: false,
-                  readOnly: true,
-                  style: style,
-                  maxLength: 13,
-                  onTap: () {
-                    showModalBottomSheet(
-                      backgroundColor: const Color(0xff181818),
-                      context: context,
-                      barrierColor: Colors.transparent,
-                      builder: (context) {
-                        return MultiProvider(
-                          providers: [
-                            ChangeNotifierProvider.value(
-                              value: keybordAmountController,
-                            ),
-                            ChangeNotifierProvider.value(
-                              value: rateCardController,
-                            )
-                          ],
-                          child: Column(
-                            children: [
-                              const CountrySelector(),
-                              const CustomKeyboard()
-                            ],
-                          ),
+    return Consumer<TheamController>(
+      builder: (context, value, child) {
+        return Center(
+          child: Consumer<KeybordAmountController>(
+            builder: (context, value, child) {
+              _textController.text = keybordAmountController!.diplayValue;
+              return Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      showCursor: false,
+                      autofocus: false,
+                      readOnly: true,
+                      style: style,
+                      maxLength: 13,
+                      onTap: () {
+                        showModalBottomSheet(
+                          backgroundColor: const Color(0xff181818),
+                          context: context,
+                          barrierColor: Colors.transparent,
+                          builder: (context) {
+                            return MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider.value(
+                                  value: keybordAmountController,
+                                ),
+                                ChangeNotifierProvider.value(
+                                  value: rateCardController,
+                                )
+                              ],
+                              child: Column(
+                                children: const [
+                                  CountrySelector(),
+                                  CustomKeyboard()
+                                ],
+                              ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                  decoration: InputDecoration(
-                    hintText: '환전금액',
-                    hintStyle: const TextStyle(
-                      fontSize: 29.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    counterText: '',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 1.0),
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                ),
-              ),
-              Consumer<KeybordAmountController>(
-                builder: (context, value, child) {
-                  IconData iconDate = rateInfo!.currencyIcon(value.countryCode);
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 8),
-                    child: SizedBox(
-                      child: Icon(
-                        iconDate,
-                        size: 28,
-                        weight: 30,
-                        color: Colors.white,
+                      decoration: InputDecoration(
+                        hintText: '환전금액',
+                        hintStyle: TextStyle(
+                          fontSize: 29.0,
+                          color: theamController.darkMod
+                              ? Colors.white
+                              : Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        counterText: '',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: theamController.darkMod
+                                  ? Colors.white
+                                  : Colors.black,
+                              width: 1.0),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
                       ),
                     ),
-                  );
-                },
-              )
-            ],
-          );
-        },
-      ),
+                  ),
+                  Consumer<KeybordAmountController>(
+                    builder: (context, value, child) {
+                      IconData iconDate =
+                          rateInfo!.currencyIcon(value.countryCode);
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 8, right: 8),
+                        child: SizedBox(
+                          child: Icon(
+                            iconDate,
+                            size: 28,
+                            weight: 30,
+                            color: theamController.darkMod
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

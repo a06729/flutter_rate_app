@@ -1,5 +1,6 @@
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
+import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/hive/rate_model.dart';
 import 'package:exchange_rate_app/screens/home.dart';
 import 'package:flutter/material.dart';
@@ -24,30 +25,38 @@ Future<void> main() async {
   // box = await Hive.openBox('box');
   // box.put(
   //     'test', RateModel(base: 'test', date: 'test', rates: {"test": 123.4}));
-
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider.value(
+        value: KeybordAmountController(),
+      ),
+      ChangeNotifierProvider.value(
+        value: TheamController(),
+      ),
+      ChangeNotifierProvider.value(
+        value: RateCardController(),
+      ),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    TheamController theamController = Provider.of<TheamController>(context);
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: '환율나우',
+      debugShowCheckedModeBanner: true,
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Jua-Regular',
+        brightness:
+            theamController.darkMod ? Brightness.dark : Brightness.light,
       ),
-      home: MultiProvider(providers: [
-        ChangeNotifierProvider.value(
-          value: KeybordAmountController(),
-        ),
-        ChangeNotifierProvider.value(
-          value: RateCardController(),
-        ),
-      ], child: const Home()),
+      home: const Home(),
     );
   }
 }
