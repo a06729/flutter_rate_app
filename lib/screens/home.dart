@@ -5,11 +5,9 @@ import 'package:exchange_rate_app/services/exchange_rate_api.dart';
 import 'package:exchange_rate_app/widgets/ads_widget.dart';
 import 'package:exchange_rate_app/widgets/amount_render.dart';
 import 'package:exchange_rate_app/widgets/exchange_rate_card.dart';
-import 'package:exchange_rate_app/widgets/model/exchange_rate_card_model.dart';
-import 'package:exchange_rate_app/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -20,10 +18,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  var logger = Logger(
+    printer: PrettyPrinter(),
+  );
+
+  var loggerNoStack = Logger(
+    printer: PrettyPrinter(methodCount: 0),
+  );
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final exchangeApi = ExchangeRateApi();
   final Color bgBlack = const Color(0xff181818);
-  late ExchangeRateCardModel cardModel;
+  // late ExchangeRateCardModel cardModel;
   late KeybordAmountController providerController;
   late TheamController theamController;
 
@@ -34,7 +40,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    cardModel = ExchangeRateCardModel();
+    // cardModel = ExchangeRateCardModel();
     providerController =
         Provider.of<KeybordAmountController>(context, listen: false);
     rateCardController =
@@ -66,17 +72,22 @@ class _HomeState extends State<Home> {
                     Consumer<TheamController>(
                       builder: (context, value, child) {
                         return IconButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              // final SharedPreferences prefs = await _prefs;
+                              // var darkModeValue = prefs.get('darkMode');
+                              // logger.d("$darkModeValue");
                               theamController.dartMode();
                             },
                             icon: theamController.darkMod
                                 ? const Icon(
                                     Icons.light_mode,
                                     color: Colors.white,
+                                    size: 40,
                                   )
                                 : const Icon(
-                                    Icons.dark_mode,
+                                    Icons.dark_mode_sharp,
                                     color: Colors.black,
+                                    size: 40,
                                   ));
                       },
                     )

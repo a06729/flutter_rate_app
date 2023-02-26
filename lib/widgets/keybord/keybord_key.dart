@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class KeyboardKey extends StatefulWidget {
   Widget customWidget;
@@ -20,6 +21,9 @@ class KeyboardKey extends StatefulWidget {
 }
 
 class _KeyboardKeyState extends State<KeyboardKey> {
+  var logger = Logger(
+    printer: PrettyPrinter(),
+  );
   renderLabe() {
     if (widget.label is Widget) {
       return widget.label;
@@ -38,7 +42,7 @@ class _KeyboardKeyState extends State<KeyboardKey> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        print("widget.value:${widget.value}");
+        logger.d("widget.value:${widget.value}");
         widget.onTap(widget.value);
       },
       child: AspectRatio(

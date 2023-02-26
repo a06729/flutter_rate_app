@@ -71,7 +71,7 @@ class _AmountRenderState extends State<AmountRender> {
                         showModalBottomSheet(
                           backgroundColor: theamController.darkMod
                               ? const Color(0xff181818)
-                              : Color.fromARGB(255, 250, 222, 203),
+                              : const Color.fromARGB(255, 250, 222, 203),
                           context: context,
                           barrierColor: Colors.transparent,
                           builder: (context) {

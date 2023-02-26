@@ -1,9 +1,8 @@
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
-import 'package:exchange_rate_app/controller/theam_controller.dart';
-import 'package:exchange_rate_app/widgets/country_selector_list.dart';
 import 'package:exchange_rate_app/widgets/keybord/keybord_key_render.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class CustomKeyboard extends StatefulWidget {
@@ -23,6 +22,9 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   late RateCardController? rateController;
 
   late TextEditingController _textController;
+  var logger = Logger(
+    printer: PrettyPrinter(),
+  );
 
   @override
   initState() {
@@ -92,8 +94,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
                   ),
                   onPressed: value.amount.isNotEmpty
                       ? () async {
-                          print("amount:${value.amount}");
-                          // rateController!.rateApi('KRW', 'USD', value.amount);
+                          logger.d("amount:${value.amount}");
                           Navigator.pop(context);
                           await rateController!.rateApi(
                               rateController!.rateCardInfo,

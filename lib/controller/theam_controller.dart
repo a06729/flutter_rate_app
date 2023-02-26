@@ -15,6 +15,12 @@ class TheamController extends ChangeNotifier {
     update();
   }
 
+  //초기 실행시 테마 설정값을 가져와서 업데이트하는 함수
+  Future<void> initMode() async {
+    await _model.initMode();
+    update();
+  }
+
   void update() {
     notifyListeners();
   }
