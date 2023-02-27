@@ -1,22 +1,19 @@
-import 'dart:ffi';
-
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
-import 'package:exchange_rate_app/hive/rate_model.dart';
-import 'package:exchange_rate_app/model/theam_model.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:exchange_rate_app/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-// import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 late Box box;
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   // if (kReleaseMode) {
   //   // Is Release Mode??
   //   print('릴리즈 mode');
@@ -57,11 +54,17 @@ class _MyAppState extends State<MyApp> {
   late Future<void> themInitFuture;
   @override
   void initState() {
+    super.initState();
     theamController = Provider.of<TheamController>(context, listen: false);
     //설정값을 저정한것을 실행 시키기 위해 함수를 불러온다.
     //휴대폰이 켜지면 유저가 설정한 테마모드를 불러오기위한 것
     themInitFuture = theamController.initMode();
-    super.initState();
+    initialization();
+  }
+
+  void initialization() async {
+    await Future.delayed(const Duration(seconds: 1));
+    FlutterNativeSplash.remove();
   }
 
   @override

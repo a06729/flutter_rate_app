@@ -29,25 +29,25 @@ class _AdsWidgetState extends State<AdsWidget> {
     if (kReleaseMode) {
       //실제 앱에서 사용하는 배너
       bannerAd = BannerAd(
-          listener: const BannerAdListener(),
-          size: AdSize.banner,
-          adUnitId: Platform.isIOS ? iOSTestUnitId : androidUnitId,
-          request: const AdRequest(keywords: ['여행', '여행사', '여행지', '환율']))
-        ..load();
+        listener: const BannerAdListener(),
+        size: AdSize.banner,
+        adUnitId: Platform.isIOS ? iOSTestUnitId : androidUnitId,
+        request: const AdRequest(keywords: ['여행', '여행사', '여행지', '숙박']),
+      )..load();
     } else {
       //테스트 앱에서 쓰는 배너
       bannerAd = BannerAd(
           listener: const BannerAdListener(),
           size: AdSize.banner,
           adUnitId: Platform.isIOS ? iOSTestUnitId : androidTestUnitId,
-          request: const AdRequest(keywords: ['여행', '여행사', '여행지', '환율']))
+          request: const AdRequest(keywords: ['여행', '여행사', '여행지', '숙박']))
         ..load();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 50,
       child: bannerAd == null ? Container() : AdWidget(ad: bannerAd),
     );
