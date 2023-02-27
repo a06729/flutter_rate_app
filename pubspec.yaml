@@ -74,9 +74,9 @@ flutter_native_splash:
   image_dark: assets/logo/icon-removebg.png
 
   android_12:
-    image: assets/logo/icon-removebg.png
+    image: assets/logo/icon-removebg-12.png
     icon_background_color: "#fff8f3"
-    image_dark: assets/logo/icon-removebg.png
+    image_dark: assets/logo/icon-removebg-12.png
     icon_background_color_dark: "#fff8f3"
   
   web: false
