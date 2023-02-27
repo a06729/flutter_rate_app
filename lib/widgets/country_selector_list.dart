@@ -37,41 +37,43 @@ class _CountrySelectorState extends State<CountrySelector> {
       builder: (context, value, child) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
-            child: Consumer<KeybordAmountController>(
-              builder: (context, value, child) {
-                return DropdownButton(
-                    isExpanded: true,
-                    hint: Text(
-                      '화폐를 선택해주세요',
-                      style: TextStyle(
-                          color: _theamController.darkMod
-                              ? Colors.black
-                              : Colors.white),
-                    ),
-                    dropdownColor:
-                        _theamController.darkMod ? Colors.white : Colors.black,
-                    value: chooseValue,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    iconSize: 20,
-                    items: listItem.map((valueItem) {
-                      return DropdownMenuItem(
-                          value: valueItem['code'],
-                          child: Center(
-                            child: Text(
-                                '${valueItem['code']} : ${valueItem['currencyName']}',
-                                style: const TextStyle(color: Colors.white)),
-                          ));
-                    }).toList(),
-                    onChanged: (newValue) {
-                      chooseValue = newValue.toString();
-                      keybordAmountController!.countryCodeUpdate(chooseValue);
-                      logger.d("chooseValue:$chooseValue");
-                    });
-              },
-            ),
+          child: Consumer<KeybordAmountController>(
+            builder: (context, value, child) {
+              return DropdownButton(
+                  isExpanded: true,
+                  borderRadius: BorderRadius.circular(35),
+                  hint: Text(
+                    '화폐를 선택해주세요',
+                    style: TextStyle(
+                        color: _theamController.darkMod
+                            ? Colors.black
+                            : Colors.white),
+                  ),
+                  dropdownColor: _theamController.darkMod
+                      ? Colors.white
+                      : const Color.fromRGBO(223, 255, 216, 1),
+                  value: chooseValue,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  iconSize: 20,
+                  items: listItem.map((valueItem) {
+                    return DropdownMenuItem(
+                        value: valueItem['code'],
+                        child: Center(
+                          child: Text(
+                            '${valueItem['code']} : ${valueItem['currencyName']}',
+                            style: TextStyle(
+                                color: _theamController.darkMod
+                                    ? Colors.white
+                                    : const Color.fromRGBO(149, 189, 255, 1)),
+                          ),
+                        ));
+                  }).toList(),
+                  onChanged: (newValue) {
+                    chooseValue = newValue.toString();
+                    keybordAmountController!.countryCodeUpdate(chooseValue);
+                    logger.d("chooseValue:$chooseValue");
+                  });
+            },
           ),
         );
       },

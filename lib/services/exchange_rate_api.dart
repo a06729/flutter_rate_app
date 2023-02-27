@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ExchangeRateApi {
   final String baseUrl =
-      'https://port-0-rate-api-server-r8xoo2mleehqmty.sel3.cloudtype.app/rate';
+      'https://nginx-nginx-r8xoo2mleehqmty.sel3.cloudtype.app/rate';
 
   Future getRateApi({required String baseCode, required String amount}) async {
     final Map<String, String> requestHeaders = {

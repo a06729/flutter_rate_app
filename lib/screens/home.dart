@@ -6,6 +6,7 @@ import 'package:exchange_rate_app/widgets/ads_widget.dart';
 import 'package:exchange_rate_app/widgets/amount_render.dart';
 import 'package:exchange_rate_app/widgets/exchange_rate_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -63,6 +64,9 @@ class _HomeState extends State<Home> {
           extendBodyBehindAppBar: false,
           appBar: AppBar(
             surfaceTintColor: Colors.transparent,
+            systemOverlayStyle: theamController.darkMod
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark,
             actions: [
               Expanded(
                 child: Row(
