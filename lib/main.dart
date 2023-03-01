@@ -77,6 +77,7 @@ class _MyAppState extends State<MyApp> {
           theme: ThemeData(
             useMaterial3: true,
             fontFamily: 'Jua-Regular',
+            shadowColor: Colors.transparent,
             brightness:
                 theamController.darkMod ? Brightness.dark : Brightness.light,
           ),
