@@ -1,5 +1,7 @@
+import 'package:exchange_rate_app/hive/rate_model.dart';
 import 'package:exchange_rate_app/model/rateInfo/rateInfo.dart';
 import 'package:exchange_rate_app/services/exchange_rate_api.dart';
+import 'package:hive/hive.dart';
 // import 'package:flutter/material.dart';
 // import '../common/currency_icons_icons.dart';
 import 'package:logger/logger.dart';
@@ -10,8 +12,10 @@ class RateCardModel {
   //환율정보 변수
   late RateInfo rateInfo;
   //환율 카드 기본 정보를 넣기 위한 변수
-  //
   late List<Map<String, dynamic>> _rateCardInfoDefault;
+
+  late Box rateCardbox;
+
   bool _lodding = false;
   var logger = Logger(
     printer: PrettyPrinter(),
@@ -38,6 +42,16 @@ class RateCardModel {
     }
   }
 
+  void initRateCard(List<Map<String, dynamic>> rates) {
+    _rateCardInfoDefault = rates;
+  }
+
+  Future<void> reorderRateCard(int newIndex, item) async {
+    rateCardbox = await Hive.openBox<RateModel>('rateCardBox');
+    _rateCardInfoDefault.insert(newIndex, item);
+    rateCardbox.put('cardOrder', RateModel(rates: _rateCardInfoDefault));
+  }
+
   Future rateApi(List<Map<String, dynamic>> rateCardInfo, String amount,
       String countryCode) async {
     var rateData = await ExchangeRateApi()
@@ -57,5 +71,7 @@ class RateCardModel {
     }
 
     _rateCardInfoDefault = data;
+    // rateCardbox = await Hive.openBox<RateModel>('rateCardBox');
+    // rateCardbox.put('cardOrder', RateModel(rates: _rateCardInfoDefault));
   }
 }

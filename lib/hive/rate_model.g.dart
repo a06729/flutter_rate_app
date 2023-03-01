@@ -17,21 +17,17 @@ class RateModelAdapter extends TypeAdapter<RateModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return RateModel(
-      base: fields[0] as String,
-      date: fields[1] as String,
-      rates: (fields[2] as Map).cast<String, double>(),
+      rates: (fields[0] as List)
+          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toList(),
     );
   }
 
   @override
   void write(BinaryWriter writer, RateModel obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.base)
       ..writeByte(1)
-      ..write(obj.date)
-      ..writeByte(2)
+      ..writeByte(0)
       ..write(obj.rates);
   }
 

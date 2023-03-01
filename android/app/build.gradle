@@ -57,8 +57,6 @@ android {
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        versionCode 2
-        versionName "1.0"
         multiDexEnabled true
     }
     signingConfigs {
@@ -86,4 +84,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.android.gms:play-services-ads:21.5.0'
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.android.gms:play-services-appset:16.0.2'
 }

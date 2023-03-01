@@ -1,14 +1,13 @@
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
+import 'package:exchange_rate_app/hive/rate_model.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:exchange_rate_app/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
-late Box box;
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -20,9 +19,8 @@ Future<void> main() async {
   // } else {
   //   print('디버깅 mode');
   // }
-
-  // await Hive.initFlutter();
-  // Hive.registerAdapter(RateModelAdapter());
+  await Hive.initFlutter();
+  Hive.registerAdapter(RateModelAdapter());
   // box = await Hive.openBox('box');
   // box.put(
   //     'test', RateModel(base: 'test', date: 'test', rates: {"test": 123.4}));

@@ -2,11 +2,11 @@ import 'package:exchange_rate_app/common/currency_icons_icons.dart';
 import 'package:flutter/material.dart';
 
 class RateInfo {
+  //국가코드,화폐이름,화폐심볼을 저장하는 변수
   final List<Map<String, dynamic>> _rateCardInfo = [
     {
       'code': 'USD',
       'currencyName': '달러',
-      'iconData': Icons.attach_money,
       'currencySymbol': '\$',
       'rateAmout': ''
     },
@@ -14,88 +14,76 @@ class RateInfo {
       'code': 'EUR',
       'currencyName': '유로',
       'currencySymbol': '€',
-      'iconData': Icons.euro_symbol,
       'rateAmout': ''
     },
     {
       'code': 'KRW',
       'currencyName': '원',
       'currencySymbol': '₩',
-      'iconData': CurrencyIcons.wonSymbol,
       'rateAmout': ''
     },
     {
       'code': 'CNY',
       'currencyName': '위안화',
       'currencySymbol': '¥',
-      'iconData': CurrencyIcons.taiwanSymbol,
       'rateAmout': ''
     },
     {
       'code': 'JPY',
       'currencyName': '엔화',
       'currencySymbol': '¥',
-      'iconData': Icons.currency_yen,
       'rateAmout': ''
     },
     {
       'code': 'HKD',
       'currencyName': '홍콩 달러',
       'currencySymbol': '\$',
-      'iconData': Icons.attach_money,
       'rateAmout': ''
     },
     {
       'code': 'THB',
       'currencyName': '바트',
       'currencySymbol': '฿',
-      'iconData': CurrencyIcons.baht,
       'rateAmout': ''
     },
     {
       'code': 'GBP',
       'currencyName': '파운드',
       'currencySymbol': '£',
-      'iconData': Icons.currency_pound,
       'rateAmout': ''
     },
     {
       'code': 'RUB',
       'currencyName': '루블',
       'currencySymbol': '',
-      'iconData': Icons.currency_ruble_outlined,
       'rateAmout': ''
     },
     {
       'code': 'INR',
       'currencyName': '루피',
       'currencySymbol': '₹',
-      'iconData': Icons.currency_rupee_outlined,
       'rateAmout': ''
     },
     {
       'code': 'PHP',
       'currencyName': '페소',
       'currencySymbol': '₱',
-      'iconData': CurrencyIcons.peso_com,
       'rateAmout': ''
     },
     {
       'code': 'TWD',
       'currencyName': '타이완 달러',
       'currencySymbol': '\$',
-      'iconData': CurrencyIcons.taiwanSymbol,
       'rateAmout': ''
     },
     {
       'code': 'VND',
       'currencyName': '동',
       'currencySymbol': '₫',
-      'iconData': CurrencyIcons.dongSymbol,
       'rateAmout': ''
     },
   ];
-
+  //국가 코드별로 아이콘 정보를 정리해놓은 변수
   final Map<String, dynamic> currencyIconMap = {
     'USD': {
       'iconData': Icons.attach_money,
