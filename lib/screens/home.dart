@@ -19,7 +19,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   var logger = Logger(
     printer: PrettyPrinter(),
   );
@@ -54,6 +54,34 @@ class _HomeState extends State<Home> {
     theamController = Provider.of<TheamController>(context, listen: false);
     //환전값을 기본값으로 저장
     rateAmout = rateCardController.rateAmout;
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.detached: // (5)
+        logger.d("## detached");
+        await rateCardController.initRateCardData();
+        break;
+      case AppLifecycleState.inactive: // (6)
+        logger.d("## inactive");
+        break;
+      case AppLifecycleState.paused: // (7)
+        logger.d("## paused");
+        break;
+      case AppLifecycleState.resumed: // (8)
+        logger.d("## resumed");
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
@@ -156,77 +184,72 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 //환율 카드
-                FutureBuilder(
-                  future: rateCardController.initRateCardData(),
-                  builder: (context, snapshot) {
-                    return Consumer<RateCardController>(
-                      builder: (context, value, child) {
-                        if (value.lodding) {
-                          return const CircularProgressIndicator();
-                        }
-                        var f = NumberFormat('###,###,###,###');
-                        return Expanded(
-                            child: ReorderableListView.builder(
-                          onReorder: (oldIndex, newIndex) async {
-                            if (newIndex > oldIndex) newIndex--;
-                            final item = value.rateCardInfo.removeAt(oldIndex);
-                            await rateCardController.reorderRateCard(
-                                newIndex, item);
-                          },
-                          itemCount: value.rateCardInfo.length,
-                          itemBuilder: (context, index) {
-                            //화폐이름
-                            String currencyName =
-                                value.rateCardInfo[index]['currencyName'];
-                            //화폐코드 USD,EUR,JPY etc...
-                            String code = value.rateCardInfo[index]['code'];
-                            //화폐 심볼
-                            //카드에 출력되는 화폐 아이콘
-                            // IconData icons = value.rateCardInfo[index]['iconData'];
-                            IconData icons = rateInfo.currencyIcon(code);
-                            rateAmout = value.rateCardInfo[index]['rateAmout'];
-                            return Consumer<RateCardController>(
-                              key: ValueKey(value.rateCardInfo[index]),
-                              builder: (context, value, child) {
-                                String rateDisplay = "";
-                                if (rateAmout.isNotEmpty) {
-                                  List rateAmoutList = value.rateCardInfo[index]
-                                          ['rateAmout']
-                                      .toString()
-                                      .split('.');
-                                  if (rateAmoutList.length > 1) {
-                                    rateDisplay =
-                                        '${f.format(int.parse(rateAmoutList[0].toString()))}.${rateAmoutList[1]}';
-                                  } else {
-                                    // logger.d(
-                                    //     'rateDisplay:${rateAmoutList[0].toString()}');
-                                    rateDisplay =
-                                        rateAmoutList[0].toString().isEmpty
-                                            ? rateDisplay = '0'
-                                            : f.format(int.parse(
-                                                rateAmoutList[0].toString()));
-                                  }
-                                }
-
-                                rateAmout = value.rateCardInfo[index]
-                                            ['rateAmout']
+                Consumer<RateCardController>(
+                  builder: (context, value, child) {
+                    if (value.lodding) {
+                      return const CircularProgressIndicator();
+                    }
+                    var f = NumberFormat('###,###,###,###');
+                    return Expanded(
+                        child: ReorderableListView.builder(
+                      onReorder: (oldIndex, newIndex) async {
+                        if (newIndex > oldIndex) newIndex--;
+                        final item = value.rateCardInfo.removeAt(oldIndex);
+                        await rateCardController.reorderRateCard(
+                            newIndex, item);
+                      },
+                      itemCount: value.rateCardInfo.length,
+                      itemBuilder: (context, index) {
+                        //화폐이름
+                        String currencyName =
+                            value.rateCardInfo[index]['currencyName'];
+                        //화폐코드 USD,EUR,JPY etc...
+                        String code = value.rateCardInfo[index]['code'];
+                        //화폐 심볼
+                        //카드에 출력되는 화폐 아이콘
+                        // IconData icons = value.rateCardInfo[index]['iconData'];
+                        IconData icons = rateInfo.currencyIcon(code);
+                        rateAmout = value.rateCardInfo[index]['rateAmout'];
+                        return Consumer<RateCardController>(
+                          key: ValueKey(value.rateCardInfo[index]),
+                          builder: (context, value, child) {
+                            String rateDisplay = "";
+                            if (rateAmout.isNotEmpty) {
+                              List rateAmoutList = value.rateCardInfo[index]
+                                      ['rateAmout']
+                                  .toString()
+                                  .split('.');
+                              if (rateAmoutList.length > 1) {
+                                rateDisplay =
+                                    '${f.format(int.parse(rateAmoutList[0].toString()))}.${rateAmoutList[1]}';
+                              } else {
+                                // logger.d(
+                                //     'rateDisplay:${rateAmoutList[0].toString()}');
+                                rateDisplay = rateAmoutList[0]
                                         .toString()
                                         .isEmpty
-                                    ? '0'
-                                    : rateDisplay;
-                                return ExchangeRateCard(
-                                  currencyName: currencyName,
-                                  code: code,
-                                  amount: rateAmout.toString(),
-                                  icon: icons,
-                                  isInverted: false,
-                                );
-                              },
+                                    ? rateDisplay = '0'
+                                    : f.format(
+                                        int.parse(rateAmoutList[0].toString()));
+                              }
+                            }
+
+                            rateAmout = value.rateCardInfo[index]['rateAmout']
+                                    .toString()
+                                    .isEmpty
+                                ? '0'
+                                : rateDisplay;
+                            return ExchangeRateCard(
+                              currencyName: currencyName,
+                              code: code,
+                              amount: rateAmout.toString(),
+                              icon: icons,
+                              isInverted: false,
                             );
                           },
-                        ));
+                        );
                       },
-                    );
+                    ));
                   },
                 ),
               ],
