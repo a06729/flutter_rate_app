@@ -50,7 +50,7 @@ class _CountrySelectorState extends State<CountrySelector> {
                             : Colors.white),
                   ),
                   dropdownColor: _theamController.darkMod
-                      ? Colors.white
+                      ? Colors.black
                       : const Color.fromRGBO(223, 255, 216, 1),
                   value: chooseValue,
                   icon: const Icon(Icons.arrow_drop_down),
