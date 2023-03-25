@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 class ExchangeRateApi {
   final String baseUrl =
@@ -14,8 +15,12 @@ class ExchangeRateApi {
     final response = await http.get(url, headers: requestHeaders);
 
     if (response.statusCode == 200) {
+      var logger = Logger(
+        printer: PrettyPrinter(),
+      );
       final Map<String, dynamic> map = jsonDecode(response.body);
       // final json = LatestRateModel.fromJson(map);
+      logger.d("api 환율정보:$map");
       return map;
     }
   }

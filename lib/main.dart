@@ -2,16 +2,21 @@ import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/hive/rate_model.dart';
+import 'package:exchange_rate_app/screens/login_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:exchange_rate_app/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:get/get.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
   MobileAds.instance.initialize();
+  await Firebase.initializeApp();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   // if (kReleaseMode) {
   //   // Is Release Mode??
@@ -71,7 +76,14 @@ class _MyAppState extends State<MyApp> {
       //FuterBuilder로 테마 설정값을 가져오도록 기다리게 한다.
       future: themInitFuture,
       builder: (context, snapshot) {
-        return MaterialApp(
+        return GetMaterialApp(
+          getPages: [
+            GetPage(name: "/", page: () => const Home()),
+            GetPage(
+                name: "/loginPage",
+                page: () => const LoginPage(),
+                transition: Transition.downToUp)
+          ],
           title: '환율나우',
           debugShowCheckedModeBanner: true,
           theme: ThemeData(

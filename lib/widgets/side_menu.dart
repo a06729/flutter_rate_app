@@ -1,13 +1,145 @@
+import 'package:exchange_rate_app/controller/theam_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-class SideMenu extends StatelessWidget {
+class SideMenu extends StatefulWidget {
   const SideMenu({super.key});
 
   @override
+  State<SideMenu> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<SideMenu> {
+  late TheamController theamController;
+  @override
+  void initState() {
+    theamController = Provider.of<TheamController>(context, listen: false);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const Color bgBlack = Color(0xff181818);
-    return const Drawer(
-      backgroundColor: bgBlack,
+    Color bgColor =
+        theamController.darkMod ? const Color(0xff181818) : Colors.white;
+    // Firebase.initializeApp();
+    return FutureBuilder(
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Center();
+        }
+        return Drawer(
+          backgroundColor: bgColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              drawerHeader(context),
+              drawerMenuItems(context),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget drawerHeader(BuildContext context) {
+    Color textColor =
+        theamController.darkMod ? const Color(0xff181818) : Colors.white;
+    Color iconColor =
+        theamController.darkMod ? Colors.white : const Color(0xff181818);
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container(
+            color: Colors.blue.shade700,
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: Column(
+              children: [
+                const CircleAvatar(
+                  radius: 60,
+                  backgroundImage: null,
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                SizedBox(
+                  child: TextButton(
+                    child: Text(
+                      "로그인",
+                      style: TextStyle(color: textColor, fontSize: 25),
+                    ),
+                    onPressed: () {
+                      Get.back();
+                      Get.toNamed("/loginPage");
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          String photoURL = snapshot.data!.photoURL.toString();
+          return Container(
+            color: Colors.blue.shade700,
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: NetworkImage(photoURL),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  "${snapshot.data!.displayName}",
+                  style: TextStyle(fontSize: 28, color: textColor),
+                ),
+                Text(
+                  '${snapshot.data!.email}',
+                  style: TextStyle(fontSize: 16, color: textColor),
+                ),
+                TextButton(
+                  onPressed: FirebaseAuth.instance.signOut,
+                  child: Text(
+                    "로그아웃",
+                    style: TextStyle(fontSize: 16, color: textColor),
+                  ),
+                )
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget drawerMenuItems(BuildContext context) {
+    Color textColor =
+        theamController.darkMod ? Colors.white : const Color(0xff181818);
+    Color iconColor =
+        theamController.darkMod ? Colors.white : const Color(0xff181818);
+    return Container(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.home_outlined, size: 30, color: iconColor),
+            title: Text(
+              "홈",
+              style: TextStyle(fontSize: 20, color: textColor),
+            ),
+            onTap: () {
+              Get.back();
+              Get.toNamed("/");
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -6,8 +6,10 @@ import 'package:exchange_rate_app/services/exchange_rate_api.dart';
 import 'package:exchange_rate_app/widgets/ads_widget.dart';
 import 'package:exchange_rate_app/widgets/amount_render.dart';
 import 'package:exchange_rate_app/widgets/exchange_rate_card.dart';
+import 'package:exchange_rate_app/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -19,13 +21,21 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+class HomeGetxController extends GetxController {
+  var scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void openDrawer() {
+    scaffoldKey.currentState?.openDrawer();
+  }
+
+  void closeDrawer() {
+    scaffoldKey.currentState?.openEndDrawer();
+  }
+}
+
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   var logger = Logger(
     printer: PrettyPrinter(),
-  );
-
-  var loggerNoStack = Logger(
-    printer: PrettyPrinter(methodCount: 0),
   );
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -46,6 +56,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     // cardModel = ExchangeRateCardModel();
+
     rateInfo = RateInfo();
     providerController =
         Provider.of<KeybordAmountController>(context, listen: false);
@@ -67,6 +78,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
+      //앱 종로시
       case AppLifecycleState.detached: // (5)
         logger.d("## detached");
         await rateCardController.initRateCardData();
@@ -90,7 +102,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       builder: (context, value, child) {
         return Scaffold(
           key: _scaffoldKey,
-          // drawer: const SideMenu(),
+          drawer: const SideMenu(),
           backgroundColor: theamController.darkMod
               ? bgBlack
               : const Color.fromRGBO(255, 248, 243, 1),
@@ -100,6 +112,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             systemOverlayStyle: theamController.darkMod
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
+            leading: IconButton(
+              icon: const Icon(Icons.menu_rounded),
+              color: theamController.darkMod ? Colors.white : Colors.black,
+              onPressed: () {
+                if (_scaffoldKey.currentState!.isDrawerOpen) {
+                  _scaffoldKey.currentState!.closeDrawer();
+                  //close drawer, if drawer is open
+                } else {
+                  _scaffoldKey.currentState!.openDrawer();
+                  //open drawer, if drawer is closed
+                }
+              },
+            ),
             actions: [
               Expanded(
                 child: Row(
