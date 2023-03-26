@@ -47,15 +47,18 @@ class _SideMenuState extends State<SideMenu> {
 
   Widget drawerHeader(BuildContext context) {
     Color textColor =
-        theamController.darkMod ? const Color(0xff181818) : Colors.white;
-    Color iconColor =
         theamController.darkMod ? Colors.white : const Color(0xff181818);
+    // Color iconColor =
+    //     theamController.darkMod ? Colors.white : const Color(0xff181818);
+    Color profileBgColor = theamController.darkMod
+        ? const Color.fromRGBO(24, 24, 35, 1)
+        : const Color.fromRGBO(216, 216, 216, 1);
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Container(
-            color: Colors.blue.shade700,
+            color: profileBgColor,
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             child: Column(
               children: [
@@ -84,7 +87,7 @@ class _SideMenuState extends State<SideMenu> {
         } else {
           String photoURL = snapshot.data!.photoURL.toString();
           return Container(
-            color: Colors.blue.shade700,
+            color: profileBgColor,
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             child: Column(
               children: [
@@ -136,6 +139,17 @@ class _SideMenuState extends State<SideMenu> {
             onTap: () {
               Get.back();
               Get.toNamed("/");
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.chat, size: 30, color: iconColor),
+            title: Text(
+              "Ai 챗봇",
+              style: TextStyle(fontSize: 20, color: textColor),
+            ),
+            onTap: () {
+              Get.back();
+              Get.toNamed("/chatPage");
             },
           ),
         ],

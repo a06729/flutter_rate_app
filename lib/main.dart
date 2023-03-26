@@ -2,6 +2,7 @@ import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/hive/rate_model.dart';
+import 'package:exchange_rate_app/screens/chat_page.dart';
 import 'package:exchange_rate_app/screens/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -80,9 +81,15 @@ class _MyAppState extends State<MyApp> {
           getPages: [
             GetPage(name: "/", page: () => const Home()),
             GetPage(
-                name: "/loginPage",
-                page: () => const LoginPage(),
-                transition: Transition.downToUp)
+              name: "/loginPage",
+              page: () => const LoginPage(),
+              transition: Transition.downToUp,
+            ),
+            GetPage(
+              name: "/chatPage",
+              page: () => const ChatPage(),
+              transition: Transition.downToUp,
+            ),
           ],
           title: '환율나우',
           debugShowCheckedModeBanner: true,
