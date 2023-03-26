@@ -20,22 +20,30 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  Future<void> signInWithGoogle() async {
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+      if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
+        // Create a new credential
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        Get.toNamed("/");
+      } else {
+        Exception("로그인 에러");
+      }
+    } on FirebaseAuthException catch (error) {
+      print("로그인에러:$error");
+    }
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
@@ -91,7 +99,6 @@ class _LoginPageState extends State<LoginPage> {
               icon: Image.asset('assets/icons/google-icon.jpg', width: 50),
               onPressed: () async {
                 await signInWithGoogle();
-                Get.toNamed("/");
               },
               label: Text(
                 "구글 로그인",

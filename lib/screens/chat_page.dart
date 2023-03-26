@@ -89,7 +89,6 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             color: Colors.grey.shade300,
             child: TextField(
-              autofocus: true,
               decoration: const InputDecoration(
                   contentPadding: EdgeInsets.all(12), hintText: '텍스트 입력'),
               onSubmitted: (text) {
