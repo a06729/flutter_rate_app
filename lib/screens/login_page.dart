@@ -35,7 +35,8 @@ class _LoginPageState extends State<LoginPage> {
           idToken: googleAuth?.idToken,
         );
         await FirebaseAuth.instance.signInWithCredential(credential);
-        Get.toNamed("/");
+        // Get.toNamed("/");
+        Get.offAllNamed('/');
       } else {
         Exception("로그인 에러");
       }

@@ -35,8 +35,8 @@ class _AmountRenderState extends State<AmountRender> {
 
   @override
   void dispose() {
+    // keybordAmountController!.dispose();
     super.dispose();
-    keybordAmountController!.dispose();
   }
 
   @override

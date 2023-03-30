@@ -9,6 +9,7 @@ import 'package:exchange_rate_app/widgets/exchange_rate_card.dart';
 import 'package:exchange_rate_app/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
@@ -107,6 +108,25 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               ? bgBlack
               : const Color.fromRGBO(255, 248, 243, 1),
           extendBodyBehindAppBar: false,
+          bottomNavigationBar: BottomNavigationBar(
+              onTap: (index) {
+                print(index);
+                if (index == 0) {
+                  Get.toNamed("/");
+                } else if (index == 1) {
+                  Get.toNamed('/chatPage');
+                }
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: '홈',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chat),
+                  label: 'AI 채팅',
+                ),
+              ]),
           appBar: AppBar(
             surfaceTintColor: Colors.transparent,
             systemOverlayStyle: theamController.darkMod
@@ -277,6 +297,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     ));
                   },
                 ),
+                const SizedBox(
+                  height: 10,
+                )
               ],
             ),
           ),
