@@ -1,9 +1,11 @@
+import 'package:exchange_rate_app/controller/chat_page_controller.dart';
+import 'package:exchange_rate_app/services/gpt_api.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -14,39 +16,22 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   late final TextEditingController textFieldController;
-  List<MessageModel> messages = [
-    MessageModel(
-      text: 'Yes sure!',
-      dateTime: DateTime.now().subtract(Duration(minutes: 1)),
-      isSentByMe: false,
-    ),
-    MessageModel(
-      text: 'Yes sure!',
-      dateTime: DateTime.now().subtract(Duration(minutes: 1)),
-      isSentByMe: false,
-    ),
-    MessageModel(
-      text: 'Yes sure!',
-      dateTime: DateTime.now().subtract(Duration(minutes: 1)),
-      isSentByMe: false,
-    ),
-    MessageModel(
-      text: 'Yes sure!',
-      dateTime: DateTime.now().subtract(Duration(minutes: 1)),
-      isSentByMe: false,
-    ),
-  ].reversed.toList();
-
+  // late final GptApi gptApi;
+  // List<MessageModel> messages = [];
+  late MessageModel message;
+  late ChatPageController chatPageController;
   @override
   void initState() {
     // TODO: implement initState
     textFieldController = TextEditingController();
+    chatPageController =
+        Provider.of<ChatPageController>(context, listen: false);
+    // gptApi = GptApi();
     super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     textFieldController.dispose();
     super.dispose();
   }
@@ -61,46 +46,65 @@ class _ChatPageState extends State<ChatPage> {
         body: SafeArea(
           child: Column(mainAxisSize: MainAxisSize.max, children: [
             Expanded(
-              child: GroupedListView<MessageModel, DateTime>(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                reverse: true,
-                order: GroupedListOrder.DESC,
-                padding: const EdgeInsets.all(8),
-                elements: messages,
-                groupBy: (message) => DateTime(
-                  message.dateTime.year,
-                  message.dateTime.month,
-                  message.dateTime.day,
-                ),
-                groupHeaderBuilder: (MessageModel message) => SizedBox(
-                  height: 40,
-                  child: Center(
+              child: Consumer<ChatPageController>(
+                builder: (context, value, child) {
+                  return GroupedListView<MessageModel, DateTime>(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    reverse: true,
+                    order: GroupedListOrder.DESC,
+                    padding: const EdgeInsets.all(8),
+                    elements: value.messages,
+                    groupBy: (message) => DateTime(
+                      message.dateTime.year,
+                      message.dateTime.month,
+                      message.dateTime.day,
+                    ),
+                    groupHeaderBuilder: (MessageModel message) => SizedBox(
+                      height: 40,
+                      child: Center(
+                          child: Card(
+                        color: Colors.red,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Text(
+                            DateFormat.yMMM().format(message.dateTime),
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      )),
+                    ),
+                    itemBuilder: (context, MessageModel message) => Align(
+                      alignment: message.isSentByMe
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
                       child: Card(
-                    color: Colors.red,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Text(
-                        DateFormat.yMMM().format(message.dateTime),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        elevation: 8,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: message.isSentByMe
+                              ? Text(message.text)
+                              : message.newMassage
+                                  ? AnimatedTextKit(
+                                      animatedTexts: [
+                                        TyperAnimatedText(message.text),
+                                      ],
+                                      onFinished: () {
+                                        setState(() {
+                                          chatPageController
+                                              .messages.last.newMassage = false;
+                                        });
+                                      },
+                                      totalRepeatCount: 1,
+                                    )
+                                  : Text(message.text),
                         ),
                       ),
                     ),
-                  )),
-                ),
-                itemBuilder: (context, MessageModel message) => Align(
-                  alignment: message.isSentByMe
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Card(
-                    elevation: 8,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Text(message.text),
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
             Padding(
@@ -127,30 +131,15 @@ class _ChatPageState extends State<ChatPage> {
                               const BorderSide(width: 3, color: Colors.red),
                         ),
                       ),
-                      onSubmitted: (text) {
-                        final message = MessageModel(
-                          text: text,
-                          dateTime: DateTime.now(),
-                          isSentByMe: true,
-                        );
-                        setState(() {
-                          messages.add(message);
-                        });
-                      },
                     ),
                   ),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      final String msg = textFieldController.text;
+                      final dynamic respMsg;
                       if (textFieldController.text != "") {
-                        final message = MessageModel(
-                          text: textFieldController.text,
-                          dateTime: DateTime.now(),
-                          isSentByMe: true,
-                        );
-                        setState(() {
-                          messages.add(message);
-                          textFieldController.text = "";
-                        });
+                        await chatPageController.getGptApi(msg);
+                        textFieldController.text = "";
                       }
                     },
                     icon: const Icon(Icons.send),
@@ -159,7 +148,7 @@ class _ChatPageState extends State<ChatPage> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             )
           ]),

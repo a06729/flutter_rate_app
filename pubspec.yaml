@@ -50,6 +50,8 @@ dependencies:
   firebase_auth: ^4.3.0
   google_sign_in: ^6.0.2
   grouped_list: ^5.1.2
+  animated_text_kit: ^4.2.2
+
 
 dev_dependencies:
   flutter_test:

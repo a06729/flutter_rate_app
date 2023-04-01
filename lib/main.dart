@@ -1,3 +1,4 @@
+import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
@@ -41,6 +42,9 @@ Future<void> main() async {
       ChangeNotifierProvider.value(
         value: RateCardController(),
       ),
+      ChangeNotifierProvider.value(
+        value: ChatPageController(),
+      )
     ],
     child: const MyApp(),
   ));

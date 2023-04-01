@@ -7,23 +7,6 @@ class TheamModel {
     _darkMode = true;
   }
 
-  // static Future<TheamModel> initCreate() async {
-  //   var theamModel = TheamModel();
-  //   await theamModel._load();
-  //   return theamModel;
-  // }
-
-  // Future<void> _load() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   var darkModeValue = prefs.get('darkMode');
-  //   if (darkModeValue == null) {
-  //     _darkMode = true;
-  //     prefs.setBool('darkMode', _darkMode);
-  //   } else {
-  //     _darkMode = prefs.getBool('darkMode')!;
-  //   }
-  // }
-
   get darkMode => _darkMode;
 
   void changeMode() async {
