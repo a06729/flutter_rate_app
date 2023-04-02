@@ -18,7 +18,7 @@ class ChatPageModel {
 
     if (_gptMessage != null) {
       MessageModel messageModel = MessageModel(
-          text: '$_gptMessage',
+          text: '${_gptMessage['content']}',
           dateTime: DateTime.now(),
           isSentByMe: false,
           newMassage: true);

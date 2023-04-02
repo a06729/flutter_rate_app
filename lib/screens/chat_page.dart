@@ -150,8 +150,8 @@ class _ChatPageState extends State<ChatPage> {
                           final String msg = textFieldController.text;
                           // final dynamic respMsg;
                           if (textFieldController.text != "") {
-                            await chatPageController.getGptApi(msg);
                             textFieldController.text = "";
+                            await chatPageController.getGptApi(msg);
                           }
                         },
                         icon: const Icon(Icons.send),
