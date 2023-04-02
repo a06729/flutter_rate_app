@@ -2,6 +2,8 @@ import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/model/rateInfo/rateInfo.dart';
+import 'package:exchange_rate_app/screens/chat_page.dart';
+import 'package:exchange_rate_app/screens/login_page.dart';
 import 'package:exchange_rate_app/services/exchange_rate_api.dart';
 import 'package:exchange_rate_app/widgets/ads_widget.dart';
 import 'package:exchange_rate_app/widgets/amount_render.dart';
@@ -10,10 +12,10 @@ import 'package:exchange_rate_app/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -120,7 +122,22 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 if (index == 0) {
                   Get.toNamed("/");
                 } else if (index == 1) {
-                  Get.toNamed('/chatPage');
+                  if (FirebaseAuth.instance.currentUser != null) {
+                    logger.d("로그인 됨");
+                    Get.toNamed('/chatPage');
+                  } else {
+                    logger.d("로그인 되지 않음");
+                    Get.toNamed('/loginPage');
+                  }
+                  // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+                  //   if (user == null) {
+                  //     logger.d("로그인 되지 않음");
+                  //     Get.toNamed('/loginPage');
+                  //   } else {
+                  //     logger.d("로그인 됨");
+                  //     Get.toNamed('/chatPage');
+                  //   }
+                  // });
                 }
               },
               items: [

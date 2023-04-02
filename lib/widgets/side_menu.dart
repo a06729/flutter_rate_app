@@ -141,17 +141,17 @@ class _SideMenuState extends State<SideMenu> {
               Get.toNamed("/");
             },
           ),
-          ListTile(
-            leading: Icon(Icons.chat, size: 30, color: iconColor),
-            title: Text(
-              "Ai 챗봇",
-              style: TextStyle(fontSize: 20, color: textColor),
-            ),
-            onTap: () {
-              Get.back();
-              Get.toNamed("/chatPage");
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.chat, size: 30, color: iconColor),
+          //   title: Text(
+          //     "Ai 챗봇",
+          //     style: TextStyle(fontSize: 20, color: textColor),
+          //   ),
+          //   onTap: () {
+          //     Get.back();
+          //     Get.toNamed("/chatPage");
+          //   },
+          // ),
         ],
       ),
     );

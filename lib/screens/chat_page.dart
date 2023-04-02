@@ -139,8 +139,9 @@ class _ChatPageState extends State<ChatPage> {
                                 borderRadius: BorderRadius.circular(10)),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide:
-                                  const BorderSide(width: 3, color: Colors.red),
+                              borderSide: const BorderSide(
+                                  width: 3,
+                                  color: ChatPageStyle.chatInputBorderColor),
                             ),
                           ),
                         ),
