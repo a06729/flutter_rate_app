@@ -28,6 +28,9 @@ Future<void> main() async {
   // }
   await Hive.initFlutter();
   Hive.registerAdapter(RateModelAdapter());
+
+  //설정값을 저정한것을 실행 시키기 위해 함수를 불러온다.
+  //휴대폰이 켜지면 유저가 설정한 테마모드를 불러오기위한 것
   await TheamController().initMode();
 
   runApp(MultiProvider(
@@ -63,9 +66,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     theamController = Provider.of<TheamController>(context, listen: false);
-    //설정값을 저정한것을 실행 시키기 위해 함수를 불러온다.
-    //휴대폰이 켜지면 유저가 설정한 테마모드를 불러오기위한 것
-    // themInitFuture = theamController.initMode();
     initialization();
   }
 

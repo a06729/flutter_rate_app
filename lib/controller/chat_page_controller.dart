@@ -20,7 +20,7 @@ class ChatPageController extends ChangeNotifier {
     MessageModel messageModel = MessageModel(
       text: message,
       dateTime: DateTime.now(),
-      isSentByMe: false,
+      isSentByMe: true,
     );
     messages.add(messageModel);
     update();
