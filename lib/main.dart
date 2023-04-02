@@ -28,9 +28,8 @@ Future<void> main() async {
   // }
   await Hive.initFlutter();
   Hive.registerAdapter(RateModelAdapter());
-  // box = await Hive.openBox('box');
-  // box.put(
-  //     'test', RateModel(base: 'test', date: 'test', rates: {"test": 123.4}));
+  await TheamController().initMode();
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider.value(
@@ -59,14 +58,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late TheamController theamController;
-  late Future<void> themInitFuture;
+  late Future<bool> themInitFuture;
   @override
   void initState() {
     super.initState();
     theamController = Provider.of<TheamController>(context, listen: false);
     //설정값을 저정한것을 실행 시키기 위해 함수를 불러온다.
     //휴대폰이 켜지면 유저가 설정한 테마모드를 불러오기위한 것
-    themInitFuture = theamController.initMode();
+    // themInitFuture = theamController.initMode();
     initialization();
   }
 
@@ -77,10 +76,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      //FuterBuilder로 테마 설정값을 가져오도록 기다리게 한다.
-      future: themInitFuture,
-      builder: (context, snapshot) {
+    return Consumer<TheamController>(
+      builder: (context, value, child) {
         return GetMaterialApp(
           getPages: [
             GetPage(name: "/", page: () => const Home()),
@@ -101,8 +98,7 @@ class _MyAppState extends State<MyApp> {
             useMaterial3: true,
             fontFamily: 'Jua-Regular',
             shadowColor: Colors.transparent,
-            brightness:
-                theamController.darkMod ? Brightness.dark : Brightness.light,
+            brightness: value.darkMod ? Brightness.dark : Brightness.light,
           ),
           home: const Home(),
         );

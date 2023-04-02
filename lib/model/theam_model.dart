@@ -9,7 +9,7 @@ class TheamModel {
 
   get darkMode => _darkMode;
 
-  void changeMode() async {
+  Future<void> changeMode() async {
     final prefs = await SharedPreferences.getInstance();
     if (_darkMode) {
       _darkMode = false;

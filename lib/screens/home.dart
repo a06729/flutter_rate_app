@@ -104,11 +104,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         return Scaffold(
           key: _scaffoldKey,
           drawer: const SideMenu(),
-          backgroundColor: theamController.darkMod
-              ? bgBlack
-              : const Color.fromRGBO(255, 248, 243, 1),
+          backgroundColor:
+              value.darkMod ? bgBlack : const Color.fromRGBO(255, 248, 243, 1),
           extendBodyBehindAppBar: false,
           bottomNavigationBar: BottomNavigationBar(
+              unselectedLabelStyle: TextStyle(
+                color: value.darkMod ? Colors.white : Colors.black,
+                fontSize: 15,
+              ),
+              backgroundColor: value.darkMod
+                  ? bgBlack
+                  : const Color.fromRGBO(255, 248, 243, 1),
               onTap: (index) {
                 print(index);
                 if (index == 0) {
@@ -117,13 +123,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   Get.toNamed('/chatPage');
                 }
               },
-              items: const [
+              items: [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
+                  icon: Icon(
+                    Icons.home,
+                    color: value.darkMod ? Colors.white : Colors.black,
+                  ),
                   label: '홈',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.chat),
+                  icon: Icon(
+                    Icons.chat,
+                    color: value.darkMod ? Colors.white : Colors.black,
+                  ),
                   label: 'AI 채팅',
                 ),
               ]),
@@ -158,7 +170,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                               // final SharedPreferences prefs = await _prefs;
                               // var darkModeValue = prefs.get('darkMode');
                               // logger.d("$darkModeValue");
-                              theamController.dartMode();
+                              await theamController.dartMode();
                             },
                             icon: theamController.darkMod
                                 ? const Icon(
