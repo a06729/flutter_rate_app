@@ -118,7 +118,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   ? bgBlack
                   : const Color.fromRGBO(255, 248, 243, 1),
               onTap: (index) {
-                print(index);
+                logger.d("페이지 인덱스:$index");
                 if (index == 0) {
                   Get.toNamed("/");
                 } else if (index == 1) {
