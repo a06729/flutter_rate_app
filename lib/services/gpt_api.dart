@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class GptApi {
-  final String baseUrl = 'http://10.0.2.2/gpt/chat';
+  final String baseUrl =
+      'https://nginx-nginx-r8xoo2mleehqmty.sel3.cloudtype.app/gpt/chat';
 
   Future getChatApi({required String message}) async {
     final Map<String, String> requestHeaders = {
