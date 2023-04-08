@@ -81,7 +81,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
-      //앱 종로시
+      //앱 종료시
       case AppLifecycleState.detached: // (5)
         logger.d("## detached");
         await rateCardController.initRateCardData();

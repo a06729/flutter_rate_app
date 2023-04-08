@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class GptApi {
-  final String baseUrl = 'http://localhost:8000/gpt/chat';
+  final String baseUrl = 'http://10.0.2.2/gpt/chat';
 
   Future getChatApi({required String message}) async {
     final Map<String, String> requestHeaders = {

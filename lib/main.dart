@@ -10,12 +10,16 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:exchange_rate_app/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:provider/provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:get/get.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  KakaoSdk.init(
+      nativeAppKey: '2e7ffbc174951dde4da1016d119d72db',
+      javaScriptAppKey: '1ea9d2e339911d80ac2511ac44838d18');
 
   MobileAds.instance.initialize();
   await Firebase.initializeApp();

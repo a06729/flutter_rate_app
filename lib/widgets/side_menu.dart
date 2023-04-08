@@ -1,9 +1,11 @@
 import 'package:exchange_rate_app/controller/theam_controller.dart';
+import 'package:exchange_rate_app/services/social_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({super.key});
@@ -18,6 +20,16 @@ class _SideMenuState extends State<SideMenu> {
   void initState() {
     theamController = Provider.of<TheamController>(context, listen: false);
     super.initState();
+  }
+
+  Future<void> signOut() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User user = auth.currentUser!;
+    final uid = user.uid;
+    if (uid.contains("kakao")) {
+      SocialLogin().kakaologout();
+    }
+    await FirebaseAuth.instance.signOut();
   }
 
   @override
@@ -107,7 +119,7 @@ class _SideMenuState extends State<SideMenu> {
                   style: TextStyle(fontSize: 16, color: textColor),
                 ),
                 TextButton(
-                  onPressed: FirebaseAuth.instance.signOut,
+                  onPressed: signOut,
                   child: Text(
                     "로그아웃",
                     style: TextStyle(fontSize: 16, color: textColor),
