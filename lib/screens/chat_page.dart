@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:exchange_rate_app/styles/chat_page_style.dart';
 
@@ -118,49 +119,8 @@ class _ChatPageState extends State<ChatPage> {
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: textFieldController,
-                          textInputAction: TextInputAction.newline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(12),
-                            hintText: '텍스트 입력',
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    width: 3,
-                                    color: ChatPageStyle.chatInputBorderColor),
-                                borderRadius: BorderRadius.circular(10)),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  width: 3,
-                                  color: ChatPageStyle.chatInputBorderColor),
-                            ),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          final String msg = textFieldController.text;
-                          // final dynamic respMsg;
-                          if (textFieldController.text != "") {
-                            textFieldController.text = "";
-                            await chatPageController.getGptApi(msg);
-                          }
-                        },
-                        icon: const Icon(Icons.send),
-                        iconSize: 30,
-                      )
-                    ],
-                  ),
-                ),
+                loadingWidget(),
+                messageBox(),
                 const SizedBox(
                   height: 15,
                 )
@@ -168,6 +128,69 @@ class _ChatPageState extends State<ChatPage> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Consumer<ChatPageController> loadingWidget() {
+    return Consumer<ChatPageController>(
+      builder: (context, value, child) {
+        return Visibility(
+          child: SizedBox(
+            height: 50,
+            child: const LoadingIndicator(
+              indicatorType: Indicator.ballPulseSync,
+              colors: [Colors.white],
+              pathBackgroundColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+            ),
+          ),
+          visible: value.gptLoding,
+        );
+      },
+    );
+  }
+
+  Padding messageBox() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: textFieldController,
+              textInputAction: TextInputAction.newline,
+              maxLines: null,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(12),
+                hintText: '텍스트 입력',
+                enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                        width: 3, color: ChatPageStyle.chatInputBorderColor),
+                    borderRadius: BorderRadius.circular(10)),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
+                      width: 3, color: ChatPageStyle.chatInputBorderColor),
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () async {
+              final String msg = textFieldController.text;
+              // final dynamic respMsg;
+              if (textFieldController.text != "") {
+                textFieldController.text = "";
+                await chatPageController.getGptApi(msg);
+              }
+            },
+            icon: const Icon(Icons.send),
+            iconSize: 30,
+          )
+        ],
       ),
     );
   }

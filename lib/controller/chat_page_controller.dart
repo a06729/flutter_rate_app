@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:exchange_rate_app/model/chat_page_model.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ class ChatPageController extends ChangeNotifier {
   }
 
   String get gptMessage => _model.gptMessage;
+  bool get gptLoding => _model.gptLoding;
   List<MessageModel> get messages => _model.messages;
 
   void update() {
@@ -17,6 +20,7 @@ class ChatPageController extends ChangeNotifier {
   }
 
   Future<void> getGptApi(String message) async {
+    _model.gptLoding = true;
     MessageModel messageModel = MessageModel(
       text: message,
       dateTime: DateTime.now(),
@@ -26,6 +30,7 @@ class ChatPageController extends ChangeNotifier {
     update();
 
     await _model.getGptApi(message);
+    _model.gptLoding = false;
     update();
   }
 }

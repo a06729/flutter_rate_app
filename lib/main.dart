@@ -65,7 +65,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late TheamController theamController;
-  late Future<bool> themInitFuture;
   @override
   void initState() {
     super.initState();
@@ -84,7 +83,10 @@ class _MyAppState extends State<MyApp> {
       builder: (context, value, child) {
         return GetMaterialApp(
           getPages: [
-            GetPage(name: "/", page: () => const Home()),
+            GetPage(
+              name: "/",
+              page: () => const Home(),
+            ),
             GetPage(
               name: "/loginPage",
               page: () => const LoginPage(),

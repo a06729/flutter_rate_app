@@ -9,9 +9,13 @@ class ChatPageModel {
 
   dynamic _gptMessage = '';
   final List<MessageModel> _messages = [];
+  bool _gptLoding = false;
 
   get gptMessage => _gptMessage;
   get messages => _messages;
+  bool get gptLoding => _gptLoding;
+
+  set gptLoding(bool loding) => _gptLoding = loding;
 
   Future<void> getGptApi(String message) async {
     _gptMessage = await GptApi()?.getChatApi(message: message);
