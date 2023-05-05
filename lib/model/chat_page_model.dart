@@ -17,7 +17,7 @@ class ChatPageModel {
 
   set gptLoding(bool loding) => _gptLoding = loding;
 
-  Future<void> getGptApi(String message) async {
+  Future<String> getGptApi(String message) async {
     _gptMessage = await GptApi()?.getChatApi(message: message);
 
     if (_gptMessage != null) {
@@ -26,7 +26,10 @@ class ChatPageModel {
           dateTime: DateTime.now(),
           isSentByMe: false,
           newMassage: true);
+
       _messages.add(messageModel);
+
+      return _gptMessage['content'];
     } else {
       MessageModel messageModel = MessageModel(
           text: '통신실패',
@@ -34,6 +37,7 @@ class ChatPageModel {
           isSentByMe: false,
           newMassage: true);
       _messages.add(messageModel);
+      return '통신실패';
     }
   }
 }

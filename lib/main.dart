@@ -2,6 +2,7 @@ import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
+import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/hive/rate_model.dart';
 import 'package:exchange_rate_app/screens/chat_page.dart';
 import 'package:exchange_rate_app/screens/login_page.dart';
@@ -39,6 +40,10 @@ Future<void> main() async {
 
   runApp(MultiProvider(
     providers: [
+      Provider(
+        create: (context) => AppDb(),
+        dispose: (context, AppDb db) => db.close(),
+      ),
       ChangeNotifierProvider.value(
         value: KeybordAmountController(),
       ),
@@ -69,6 +74,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     theamController = Provider.of<TheamController>(context, listen: false);
+    //스플래쉬 이미지 실행
     initialization();
   }
 
