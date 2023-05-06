@@ -40,6 +40,8 @@ Future<void> main() async {
 
   runApp(MultiProvider(
     providers: [
+      //ChangeNotifierProxyProvider에서 update 파라미터 함수에
+      //두번째 파라미터 값에 AppDb()객체 인스턴스한 값을 접근가능하도록 하는것
       Provider.value(
         value: AppDb(),
       ),

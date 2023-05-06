@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/model/chat_page_model.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
@@ -26,14 +28,14 @@ class ChatPageController extends ChangeNotifier {
   }
 
   parseMessage(List<ChatMessageData> chatMssages) {
-    chatMssages.forEach((element) {
+    for (var element in chatMssages) {
       MessageModel messageModel = MessageModel(
         text: element.message,
         dateTime: element.messageDateTime,
         isSentByMe: element.myMessage,
       );
       messages.add(messageModel);
-    });
+    }
   }
 
   void initMassage(List<ChatMessageData> chatMssages) {

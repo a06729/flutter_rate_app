@@ -57,9 +57,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    super.initState();
-    // cardModel = ExchangeRateCardModel();
-
     rateInfo = RateInfo();
     providerController =
         Provider.of<KeybordAmountController>(context, listen: false);
@@ -69,12 +66,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     //환전값을 기본값으로 저장
     rateAmout = rateCardController.rateAmout;
     WidgetsBinding.instance.addObserver(this);
+    super.initState();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     WidgetsBinding.instance.removeObserver(this);
+    providerController.dispose();
+    rateCardController.dispose();
+    theamController.dispose();
     super.dispose();
   }
 

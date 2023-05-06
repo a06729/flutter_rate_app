@@ -23,12 +23,14 @@ class _ChatPageState extends State<ChatPage> {
   late MessageModel message;
   late ChatPageController chatPageController;
   late TheamController theamController;
+  FocusNode textFildFocus = FocusNode();
   // late AppDb _db;
   @override
   void initState() {
     // TODO: implement initState
     textFieldController = TextEditingController();
-    theamController = TheamController();
+    theamController = Provider.of<TheamController>(context, listen: false);
+
     chatPageController =
         Provider.of<ChatPageController>(context, listen: false);
     super.initState();
@@ -37,36 +39,14 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     textFieldController.dispose();
+    textFildFocus.dispose();
     super.dispose();
   }
-
-  //유저 메세지 sqllite에 저장
-  // void saveUserMassage(String massage) {
-  //   final ChatMessageCompanion entity;
-  //   entity = ChatMessageCompanion(
-  //     message: drift.Value(massage),
-  //     myMessage: const drift.Value(true),
-  //     messageDateTime: drift.Value(DateTime.now()),
-  //   );
-  //   Provider.of<AppDb>(context, listen: false).saveMessage(entity);
-  // }
-
-  // void saveGptMassage(String massage) {
-  //   final ChatMessageCompanion gptEntity;
-
-  //   gptEntity = ChatMessageCompanion(
-  //     message: drift.Value(massage),
-  //     myMessage: const drift.Value(false),
-  //     messageDateTime: drift.Value(DateTime.now()),
-  //   );
-
-  //   Provider.of<AppDb>(context, listen: false).saveMessage(gptEntity);
-  // }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
+      onTap: () => textFildFocus.unfocus(),
       child: Consumer<TheamController>(
         builder: (context, value, child) {
           return Scaffold(
@@ -82,10 +62,10 @@ class _ChatPageState extends State<ChatPage> {
               child: Column(mainAxisSize: MainAxisSize.max, children: [
                 chatArea(context),
                 loadingWidget(),
-                messageBox(),
                 const SizedBox(
-                  height: 15,
-                )
+                  height: 5,
+                ),
+                messageBox(),
               ]),
             ),
           );
@@ -96,7 +76,7 @@ class _ChatPageState extends State<ChatPage> {
 
   FutureBuilder<List<ChatMessageData>> chatArea(BuildContext context) {
     return FutureBuilder(
-      future: Provider.of<AppDb>(context).getChatMessage(),
+      future: Provider.of<AppDb>(context, listen: false).getChatMessage(),
       builder: (context, snapshot) {
         final List<ChatMessageData>? chatMssages = snapshot.data;
 
@@ -163,14 +143,13 @@ class _ChatPageState extends State<ChatPage> {
                             ? Text(message.text)
                             : message.newMassage
                                 ? AnimatedTextKit(
+                                    repeatForever: false,
                                     animatedTexts: [
                                       TyperAnimatedText(message.text),
                                     ],
                                     onFinished: () {
-                                      setState(() {
-                                        chatPageController
-                                            .messages.last.newMassage = false;
-                                      });
+                                      chatPageController
+                                          .messages.last.newMassage = false;
                                     },
                                     totalRepeatCount: 1,
                                   )
@@ -193,61 +172,59 @@ class _ChatPageState extends State<ChatPage> {
     return Consumer<ChatPageController>(
       builder: (context, value, child) {
         return Visibility(
-          child: SizedBox(
+          visible: value.gptLoding,
+          child: const SizedBox(
             height: 50,
-            child: const LoadingIndicator(
+            child: LoadingIndicator(
               indicatorType: Indicator.ballPulseSync,
-              colors: [Colors.white],
+              colors: [Colors.white, Colors.red, Colors.green],
               pathBackgroundColor: Colors.transparent,
               backgroundColor: Colors.transparent,
             ),
           ),
-          visible: value.gptLoding,
         );
       },
     );
   }
 
-  Padding messageBox() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: TextField(
-              controller: textFieldController,
-              textInputAction: TextInputAction.newline,
-              maxLines: null,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(12),
-                hintText: '텍스트 입력',
-                enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                        width: 3, color: ChatPageStyle.chatInputBorderColor),
-                    borderRadius: BorderRadius.circular(10)),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+  Widget messageBox() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: TextField(
+            focusNode: textFildFocus,
+            controller: textFieldController,
+            textInputAction: TextInputAction.newline,
+            maxLines: null,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.all(12),
+              hintText: '텍스트 입력',
+              enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(
                       width: 3, color: ChatPageStyle.chatInputBorderColor),
-                ),
+                  borderRadius: BorderRadius.circular(10)),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                    width: 3, color: ChatPageStyle.chatInputBorderColor),
               ),
             ),
           ),
-          IconButton(
-            onPressed: () async {
-              final String msg = textFieldController.text;
-              if (textFieldController.text != "") {
-                textFieldController.text = "";
-                await chatPageController.getGptApi(msg);
-              }
-            },
-            icon: const Icon(Icons.send),
-            iconSize: 30,
-          )
-        ],
-      ),
+        ),
+        IconButton(
+          onPressed: () async {
+            final String msg = textFieldController.text;
+            if (textFieldController.text != "") {
+              textFieldController.text = "";
+              await chatPageController.getGptApi(msg);
+            }
+          },
+          icon: const Icon(Icons.send),
+          iconSize: 30,
+        )
+      ],
     );
   }
 }
