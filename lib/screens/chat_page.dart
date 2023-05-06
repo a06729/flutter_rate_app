@@ -41,27 +41,27 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   //유저 메세지 sqllite에 저장
-  void saveUserMassage(String massage) {
-    final ChatMessageCompanion entity;
-    entity = ChatMessageCompanion(
-      message: drift.Value(massage),
-      myMessage: const drift.Value(true),
-      messageDateTime: drift.Value(DateTime.now()),
-    );
-    Provider.of<AppDb>(context, listen: false).saveMessage(entity);
-  }
+  // void saveUserMassage(String massage) {
+  //   final ChatMessageCompanion entity;
+  //   entity = ChatMessageCompanion(
+  //     message: drift.Value(massage),
+  //     myMessage: const drift.Value(true),
+  //     messageDateTime: drift.Value(DateTime.now()),
+  //   );
+  //   Provider.of<AppDb>(context, listen: false).saveMessage(entity);
+  // }
 
-  void saveGptMassage(String massage) {
-    final ChatMessageCompanion gptEntity;
+  // void saveGptMassage(String massage) {
+  //   final ChatMessageCompanion gptEntity;
 
-    gptEntity = ChatMessageCompanion(
-      message: drift.Value(massage),
-      myMessage: const drift.Value(false),
-      messageDateTime: drift.Value(DateTime.now()),
-    );
+  //   gptEntity = ChatMessageCompanion(
+  //     message: drift.Value(massage),
+  //     myMessage: const drift.Value(false),
+  //     messageDateTime: drift.Value(DateTime.now()),
+  //   );
 
-    Provider.of<AppDb>(context, listen: false).saveMessage(gptEntity);
-  }
+  //   Provider.of<AppDb>(context, listen: false).saveMessage(gptEntity);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -238,31 +238,9 @@ class _ChatPageState extends State<ChatPage> {
           IconButton(
             onPressed: () async {
               final String msg = textFieldController.text;
-              // final ChatMessageCompanion entity;
-              // final ChatMessageCompanion gptEntity;
-
               if (textFieldController.text != "") {
                 textFieldController.text = "";
-                saveUserMassage(msg);
-                // entity = ChatMessageCompanion(
-                //   message: drift.Value(msg),
-                //   myMssage: const drift.Value(true),
-                //   messageDateTime: drift.Value(DateTime.now()),
-                // );
-                // Provider.of<AppDb>(context, listen: false).saveMessage(entity);
-
-                String gptMsg = await chatPageController.getGptApi(msg);
-
-                saveGptMassage(gptMsg);
-
-                // gptEntity = ChatMessageCompanion(
-                //   message: drift.Value(gptMsg),
-                //   myMssage: const drift.Value(false),
-                //   messageDateTime: drift.Value(DateTime.now()),
-                // );
-
-                // Provider.of<AppDb>(context, listen: false)
-                //     .saveMessage(gptEntity);
+                await chatPageController.getGptApi(msg);
               }
             },
             icon: const Icon(Icons.send),

@@ -23,6 +23,7 @@ class AppDb extends _$AppDb {
   int get schemaVersion => 1;
 
   Future<List<ChatMessageData>> getChatMessage() async {
+    // List<ChatMessageData>? getMessage = await select(chatMessage).get();
     return await select(chatMessage).get();
   }
 

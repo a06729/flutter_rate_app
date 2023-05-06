@@ -40,9 +40,12 @@ Future<void> main() async {
 
   runApp(MultiProvider(
     providers: [
-      Provider(
-        create: (context) => AppDb(),
-        dispose: (context, AppDb db) => db.close(),
+      Provider.value(
+        value: AppDb(),
+      ),
+      ChangeNotifierProxyProvider<AppDb, ChatPageController>(
+        create: (context) => ChatPageController(),
+        update: (context, db, previous) => previous!..initAppDb(db),
       ),
       ChangeNotifierProvider.value(
         value: KeybordAmountController(),
@@ -53,9 +56,9 @@ Future<void> main() async {
       ChangeNotifierProvider.value(
         value: RateCardController(),
       ),
-      ChangeNotifierProvider.value(
-        value: ChatPageController(),
-      )
+      // ChangeNotifierProvider.value(
+      //   value: ChatPageController(),
+      // )
     ],
     child: const MyApp(),
   ));

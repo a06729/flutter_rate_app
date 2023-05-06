@@ -7,16 +7,19 @@ import 'package:drift/drift.dart' as drift;
 
 class ChatPageController extends ChangeNotifier {
   late final ChatPageModel _model;
-  // late AppDb _db;
+  AppDb? _appDb;
 
   ChatPageController() {
     _model = ChatPageModel();
-    // _db = AppDb();
   }
 
   String get gptMessage => _model.gptMessage;
   bool get gptLoding => _model.gptLoding;
   List<MessageModel> get messages => _model.messages;
+
+  void initAppDb(AppDb db) {
+    _appDb = db;
+  }
 
   void update() {
     notifyListeners();
@@ -36,23 +39,46 @@ class ChatPageController extends ChangeNotifier {
   void initMassage(List<ChatMessageData> chatMssages) {
     parseMessage(chatMssages);
     update();
-    // compute(parseMessage, chatMssages).then(
-    //   (value) {
-    //     update();
-    //   },
-    // );
   }
 
-  Future<String> getGptApi(String message) async {
-    _model.gptLoding = true;
+  void saveUserMassage(String massage) {
+    final ChatMessageCompanion entity;
+    entity = ChatMessageCompanion(
+      message: drift.Value(massage),
+      myMessage: const drift.Value(true),
+      messageDateTime: drift.Value(DateTime.now()),
+    );
+    _appDb?.saveMessage(entity);
+  }
+
+  void saveGptMassage(String massage) {
+    final ChatMessageCompanion gptEntity;
+    gptEntity = ChatMessageCompanion(
+      message: drift.Value(massage),
+      myMessage: const drift.Value(false),
+      messageDateTime: drift.Value(DateTime.now()),
+    );
+    _appDb?.saveMessage(gptEntity);
+  }
+
+  void addMessage(message, isSentByMe) {
     MessageModel messageModel = MessageModel(
       text: message,
       dateTime: DateTime.now(),
-      isSentByMe: true,
+      isSentByMe: isSentByMe,
     );
-
     messages.add(messageModel);
     update();
+  }
+
+  Future<void> getGptApi(String message) async {
+    _model.gptLoding = true;
+
+    //유제 메세지 화면에 업데이트
+    addMessage(message, true);
+
+    //유저 메세지 sqlite에 저장
+    saveUserMassage(message);
 
     String gptMsg = await _model.getGptApi(message);
 
@@ -60,9 +86,8 @@ class ChatPageController extends ChangeNotifier {
     _model.gptLoding = false;
 
     //gpt 메세지 sqllite에 저장
-    // messageSave(gptMessage, false);
-    update();
+    saveGptMassage(gptMsg);
 
-    return gptMsg;
+    update();
   }
 }
