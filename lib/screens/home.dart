@@ -110,53 +110,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           backgroundColor:
               value.darkMod ? bgBlack : const Color.fromRGBO(255, 248, 243, 1),
           extendBodyBehindAppBar: false,
-          bottomNavigationBar: BottomNavigationBar(
-              unselectedLabelStyle: TextStyle(
-                color: value.darkMod ? Colors.white : Colors.black,
-                fontSize: 15,
-              ),
-              backgroundColor: value.darkMod
-                  ? bgBlack
-                  : const Color.fromRGBO(255, 248, 243, 1),
-              onTap: (index) {
-                logger.d("페이지 인덱스:$index");
-                if (index == 0) {
-                  Get.toNamed("/");
-                } else if (index == 1) {
-                  if (FirebaseAuth.instance.currentUser != null) {
-                    logger.d("로그인 됨");
-                    Get.toNamed('/chatPage');
-                  } else {
-                    logger.d("로그인 되지 않음");
-                    Get.toNamed('/loginPage');
-                  }
-                  // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-                  //   if (user == null) {
-                  //     logger.d("로그인 되지 않음");
-                  //     Get.toNamed('/loginPage');
-                  //   } else {
-                  //     logger.d("로그인 됨");
-                  //     Get.toNamed('/chatPage');
-                  //   }
-                  // });
-                }
-              },
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.home,
-                    color: value.darkMod ? Colors.white : Colors.black,
-                  ),
-                  label: '홈',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.chat,
-                    color: value.darkMod ? Colors.white : Colors.black,
-                  ),
-                  label: 'AI 채팅',
-                ),
-              ]),
+          bottomNavigationBar: bottomNavigation(value),
           appBar: AppBar(
             surfaceTintColor: Colors.transparent,
             systemOverlayStyle: theamController.darkMod
@@ -335,6 +289,59 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           ),
         );
       },
+    );
+  }
+
+  Widget bottomNavigation(TheamController value) {
+    return Container(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+      ),
+      child: ClipRRect(
+        clipBehavior: Clip.hardEdge,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(30.0),
+          topRight: Radius.circular(30.0),
+        ),
+        child: BottomNavigationBar(
+            unselectedLabelStyle: TextStyle(
+              color: value.darkMod ? Colors.white : Colors.black,
+              fontSize: 15,
+            ),
+            backgroundColor:
+                value.darkMod ? Color.fromRGBO(33, 42, 62, 1) : Colors.white,
+            onTap: (index) {
+              logger.d("페이지 인덱스:$index");
+              if (index == 0) {
+                Get.toNamed("/");
+              } else if (index == 1) {
+                if (FirebaseAuth.instance.currentUser != null) {
+                  logger.d("로그인 됨");
+                  Get.toNamed('/chatPage');
+                } else {
+                  logger.d("로그인 되지 않음");
+                  Get.toNamed('/loginPage');
+                }
+              }
+            },
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home,
+                  color: value.darkMod ? Colors.white : Colors.black,
+                ),
+                label: '홈',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.chat,
+                  color: value.darkMod ? Colors.white : Colors.black,
+                ),
+                label: 'AI 채팅',
+              ),
+            ]),
+      ),
     );
   }
 }
