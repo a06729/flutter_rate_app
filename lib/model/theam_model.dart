@@ -1,22 +1,27 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TheamModel {
   late bool _darkMode;
-  // TheamModel._init();
   TheamModel() {
-    _darkMode = true;
+    _darkMode = false;
   }
 
   get darkMode => _darkMode;
 
   Future<void> changeMode() async {
     final prefs = await SharedPreferences.getInstance();
-    if (_darkMode) {
-      _darkMode = false;
-      await prefs.setBool('darkMode', false);
+    final switchMode = prefs.getBool('darkMode');
+    if (switchMode != null) {
+      if (switchMode == true) {
+        _darkMode = false;
+        await prefs.setBool('darkMode', false);
+      } else {
+        _darkMode = true;
+        await prefs.setBool('darkMode', true);
+      }
     } else {
-      _darkMode = true;
-      await prefs.setBool('darkMode', true);
+      _darkMode = false;
     }
   }
 
@@ -24,11 +29,10 @@ class TheamModel {
   Future<void> initMode() async {
     final prefs = await SharedPreferences.getInstance();
     final bool? darkModeValue = prefs.getBool('darkMode');
-    if (darkModeValue == null) {
-      _darkMode = true;
-      await prefs.setBool('darkMode', darkMode);
-    } else {
+    if (darkModeValue != null) {
       _darkMode = darkModeValue;
+    } else {
+      _darkMode = false;
     }
   }
 }

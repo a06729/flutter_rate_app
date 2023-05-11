@@ -34,10 +34,6 @@ Future<void> main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(RateModelAdapter());
 
-  //설정값을 저정한것을 실행 시키기 위해 함수를 불러온다.
-  //휴대폰이 켜지면 유저가 설정한 테마모드를 불러오기위한 것
-  await TheamController().initMode();
-
   runApp(MultiProvider(
     providers: [
       //ChangeNotifierProxyProvider에서 update 파라미터 함수에
@@ -74,12 +70,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // TheamController theamController =
-  //     Provider.of<TheamController>(context, listen: false);
+  late TheamController theamController;
   @override
   void initState() {
+    theamController = Provider.of<TheamController>(context, listen: false);
+
+    //설정값을 저정한것을 실행 시키기 위해 함수를 불러온다.
+    //휴대폰이 켜지면 유저가 설정한 테마모드를 불러오기위한 것
+    theamController.initMode();
+
     //스플래쉬 이미지 실행
     initialization();
+
     super.initState();
   }
 
@@ -115,7 +117,8 @@ class _MyAppState extends State<MyApp> {
             useMaterial3: true,
             fontFamily: 'Jua-Regular',
             shadowColor: Colors.transparent,
-            brightness: value.darkMod ? Brightness.dark : Brightness.light,
+            brightness:
+                theamController.darkMod ? Brightness.dark : Brightness.light,
           ),
           home: const Home(),
         );

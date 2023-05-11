@@ -1,5 +1,7 @@
+import 'package:exchange_rate_app/common/social_type.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/services/social_login.dart';
+import 'package:exchange_rate_app/widgets/social_square_title.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late TheamController theamController;
   late SocialLogin socialLogin;
+
   @override
   void initState() {
     theamController = Provider.of<TheamController>(context, listen: false);
@@ -77,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           children: [
             const SizedBox(
-              height: 30,
+              height: 50,
             ),
             Icon(
               Icons.lock,
@@ -99,37 +102,53 @@ class _LoginPageState extends State<LoginPage> {
               height: 10,
             ),
             //구글 로그인 버튼
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: theamController.darkMod
-                      ? const Color.fromRGBO(1, 22, 56, 1)
-                      : Colors.white),
-              icon: Image.asset('assets/icons/google-icon.jpg', width: 50),
-              onPressed: () async {
-                await signInWithGoogle();
-              },
-              label: Text(
-                "구글 로그인",
-                style: TextStyle(fontSize: 20, color: textColor),
-              ),
+            // ElevatedButton.icon(
+            //   style: ElevatedButton.styleFrom(
+            //       backgroundColor: theamController.darkMod
+            //           ? const Color.fromRGBO(1, 22, 56, 1)
+            //           : Colors.white),
+            //   icon: Image.asset('assets/icons/google-icon.jpg', width: 50),
+            //   onPressed: () async {
+            //     await signInWithGoogle();
+            //   },
+            //   label: Text(
+            //     "구글 로그인",
+            //     style: TextStyle(fontSize: 20, color: textColor),
+            //   ),
+            // ),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SocialSquareTitle(
+                  imagePath: 'assets/icons/google-icon.jpg',
+                  socialType: SocialType.google,
+                ),
+                SizedBox(
+                  width: 25,
+                ),
+                SocialSquareTitle(
+                  imagePath: 'assets/icons/kakao-icon.png',
+                  socialType: SocialType.kakao,
+                ),
+              ],
             ),
             const SizedBox(
               height: 10,
             ),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: theamController.darkMod
-                      ? const Color(0xffffff00)
-                      : Colors.white),
-              icon: Image.asset('assets/icons/google-icon.jpg', width: 50),
-              onPressed: () async {
-                await signInWithKakao();
-              },
-              label: Text(
-                "카카오톡 로그인",
-                style: TextStyle(fontSize: 20, color: textColor),
-              ),
-            ),
+            // ElevatedButton.icon(
+            //   style: ElevatedButton.styleFrom(
+            //       backgroundColor: theamController.darkMod
+            //           ? const Color(0xffffff00)
+            //           : Colors.white),
+            //   icon: Image.asset('assets/icons/google-icon.jpg', width: 50),
+            //   onPressed: () async {
+            //     await signInWithKakao();
+            //   },
+            //   label: Text(
+            //     "카카오톡 로그인",
+            //     style: TextStyle(fontSize: 20, color: textColor),
+            //   ),
+            // ),
           ],
         ),
       )),
