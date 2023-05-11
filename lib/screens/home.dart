@@ -2,8 +2,6 @@ import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/rate_card_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/model/rateInfo/rateInfo.dart';
-import 'package:exchange_rate_app/screens/chat_page.dart';
-import 'package:exchange_rate_app/screens/login_page.dart';
 import 'package:exchange_rate_app/services/exchange_rate_api.dart';
 import 'package:exchange_rate_app/widgets/ads_widget.dart';
 import 'package:exchange_rate_app/widgets/amount_render.dart';
@@ -73,9 +71,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void dispose() {
     // TODO: implement dispose
     WidgetsBinding.instance.removeObserver(this);
-    providerController.dispose();
-    rateCardController.dispose();
-    theamController.dispose();
     super.dispose();
   }
 
@@ -86,6 +81,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       case AppLifecycleState.detached: // (5)
         logger.d("## detached");
         await rateCardController.initRateCardData();
+        theamController.dispose();
         break;
       case AppLifecycleState.inactive: // (6)
         logger.d("## inactive");
@@ -113,6 +109,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           bottomNavigationBar: bottomNavigation(value),
           appBar: AppBar(
             surfaceTintColor: Colors.transparent,
+            backgroundColor: Colors.transparent,
             systemOverlayStyle: theamController.darkMod
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
@@ -161,16 +158,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ),
               )
             ],
-            backgroundColor: Colors.transparent,
           ),
           body: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       SizedBox(
                         height: 10,
                       ),

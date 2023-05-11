@@ -74,13 +74,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late TheamController theamController;
+  // TheamController theamController =
+  //     Provider.of<TheamController>(context, listen: false);
   @override
   void initState() {
-    super.initState();
-    theamController = Provider.of<TheamController>(context, listen: false);
     //스플래쉬 이미지 실행
     initialization();
+    super.initState();
   }
 
   void initialization() async {

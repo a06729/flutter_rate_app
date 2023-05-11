@@ -14,7 +14,6 @@ class CountrySelector extends StatefulWidget {
 
 class _CountrySelectorState extends State<CountrySelector> {
   late String chooseValue;
-  late KeybordAmountController? keybordAmountController;
   late TheamController _theamController;
   late List listItem;
   var logger = Logger(
@@ -24,10 +23,7 @@ class _CountrySelectorState extends State<CountrySelector> {
   @override
   void initState() {
     listItem = RateInfo().rateCardInfo;
-    keybordAmountController =
-        Provider.of<KeybordAmountController>(context, listen: false);
     _theamController = Provider.of<TheamController>(context, listen: false);
-    chooseValue = keybordAmountController!.countryCode;
     super.initState();
   }
 
@@ -38,7 +34,7 @@ class _CountrySelectorState extends State<CountrySelector> {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Consumer<KeybordAmountController>(
-            builder: (context, value, child) {
+            builder: (context, keybordControllerValue, child) {
               return DropdownButton(
                   isExpanded: true,
                   borderRadius: BorderRadius.circular(35),
@@ -52,7 +48,7 @@ class _CountrySelectorState extends State<CountrySelector> {
                   dropdownColor: _theamController.darkMod
                       ? Colors.black
                       : const Color.fromRGBO(223, 255, 216, 1),
-                  value: chooseValue,
+                  value: keybordControllerValue.countryCode,
                   icon: const Icon(Icons.arrow_drop_down),
                   iconSize: 20,
                   items: listItem.map((valueItem) {
@@ -70,7 +66,9 @@ class _CountrySelectorState extends State<CountrySelector> {
                   }).toList(),
                   onChanged: (newValue) {
                     chooseValue = newValue.toString();
-                    keybordAmountController!.countryCodeUpdate(chooseValue);
+
+                    keybordControllerValue.countryCodeUpdate(chooseValue);
+
                     logger.d("chooseValue:$chooseValue");
                   });
             },

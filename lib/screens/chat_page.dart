@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart' as drift;
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/db/app_db.dart';

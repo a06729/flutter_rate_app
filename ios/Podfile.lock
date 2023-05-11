@@ -10,11 +10,11 @@ PODS:
     - FirebaseAuth (~> 10.7.0)
   - Firebase/CoreOnly (10.7.0):
     - FirebaseCore (= 10.7.0)
-  - firebase_auth (4.4.0):
+  - firebase_auth (4.5.0):
     - Firebase/Auth (= 10.7.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.9.0):
+  - firebase_core (2.11.0):
     - Firebase/CoreOnly (= 10.7.0)
     - Flutter
   - FirebaseAuth (10.7.0):
@@ -126,8 +126,8 @@ DEPENDENCIES:
   - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
   - kakao_flutter_sdk_common (from `.symlinks/plugins/kakao_flutter_sdk_common/ios`)
-  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
@@ -165,9 +165,9 @@ EXTERNAL SOURCES:
   kakao_flutter_sdk_common:
     :path: ".symlinks/plugins/kakao_flutter_sdk_common/ios"
   path_provider_foundation:
-    :path: ".symlinks/plugins/path_provider_foundation/ios"
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/ios"
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqlite3_flutter_libs:
     :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
   webview_flutter_wkwebview:
@@ -176,8 +176,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppAuth: e48b432bb4ba88b10cb2bcc50d7f3af21e78b9c2
   Firebase: 0219acf760880eeec8ce479895bd7767466d9f81
-  firebase_auth: 5984ebaf5463319e304ab1c0966b06994bd1c69a
-  firebase_core: d85432877e814811e040e7659f9c82faeab66e04
+  firebase_auth: 1eb69de8f57040c5c78bb3267412e9cb395fd08c
+  firebase_core: dee76ded6c693fdb38b8ea39aef7129e32e587a3
   FirebaseAuth: dd64c01631df724b09f33e584625775c52f7d71f
   FirebaseCore: e317665b9d744727a97e623edbbed009320afdd7
   FirebaseCoreInternal: 8845798510aae74703467480f71ac613788d0696
@@ -194,9 +194,9 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
   kakao_flutter_sdk_common: fc550ec16c85451e874d5304d2e1c540a221f5cb
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
+  path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
-  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
+  shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
   sqlite3: d31b2b69d59bd1b4ab30e5c92eb18fd8e82fa392
   sqlite3_flutter_libs: 78f93cb854d4680595bc2c63c57209a104b2efb1
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f

@@ -87,10 +87,10 @@ class _AmountRenderState extends State<AmountRender> {
                                   value: theamController,
                                 ),
                               ],
-                              child: Column(
-                                children: const [
+                              child: const Column(
+                                children: [
                                   CountrySelector(),
-                                  CustomKeyboard()
+                                  CustomKeyboard(),
                                 ],
                               ),
                             );

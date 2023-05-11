@@ -1,5 +1,3 @@
-import 'dart:isolate';
-
 import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/model/chat_page_model.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
