@@ -1,10 +1,12 @@
 import 'package:exchange_rate_app/common/social_type.dart';
+import 'package:exchange_rate_app/controller/login_page_controller.dart';
 import 'package:exchange_rate_app/services/social_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 class SocialSquareTitle extends StatefulWidget {
   final String imagePath;
@@ -56,8 +58,6 @@ class _SocialSquareTitleState extends State<SocialSquareTitle> {
     } on PlatformException catch (error) {
       throw PlatformException(code: error.code);
     }
-
-    // Once signed in, return the UserCredential
   }
 
   @override
@@ -70,11 +70,26 @@ class _SocialSquareTitleState extends State<SocialSquareTitle> {
           color: Colors.grey[100]),
       child: InkWell(
         onTap: () async {
+          LoginController loginController =
+              Provider.of<LoginController>(context, listen: false);
           if (widget.socialType.text == SocialType.google.text) {
-            await signInWithGoogle();
+            loginController.loginLodding(true);
+            await signInWithGoogle()
+                .then(
+                  (value) => loginController.loginLodding(false),
+                )
+                .onError(
+                  (error, stackTrace) => loginController.loginLodding(false),
+                );
           } else if (widget.socialType.text == SocialType.kakao.text) {
-            await signInWithKakao();
+            loginController.loginLodding(true);
+            await signInWithKakao()
+                .then((value) => loginController.loginLodding(false))
+                .onError(
+                  (error, stackTrace) => loginController.loginLodding(false),
+                );
           }
+          loginController.loginLodding(false);
         },
         child: Image.asset(
           widget.imagePath,
