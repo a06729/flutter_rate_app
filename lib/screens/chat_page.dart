@@ -22,16 +22,29 @@ class _ChatPageState extends State<ChatPage> {
   late MessageModel message;
   late ChatPageController chatPageController;
   late TheamController theamController;
+
+  final _scrollController = ScrollController();
+
   FocusNode textFildFocus = FocusNode();
-  // late AppDb _db;
+
+  _scrollListener() {
+    if (_scrollController.position.atEdge) {
+      if (_scrollController.position.pixels != 0) {
+        int currentPage = chatPageController.curruntPage + 1;
+        chatPageController.nextPage(currentPage);
+      }
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     textFieldController = TextEditingController();
     theamController = Provider.of<TheamController>(context, listen: false);
-
+    _scrollController.addListener(_scrollListener);
     chatPageController =
         Provider.of<ChatPageController>(context, listen: false);
+
     super.initState();
   }
 
@@ -39,6 +52,7 @@ class _ChatPageState extends State<ChatPage> {
   void dispose() {
     textFieldController.dispose();
     textFildFocus.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -75,7 +89,9 @@ class _ChatPageState extends State<ChatPage> {
 
   FutureBuilder<List<ChatMessageData>> chatArea(BuildContext context) {
     return FutureBuilder(
-      future: Provider.of<AppDb>(context, listen: false).getChatMessage(),
+      future: Provider.of<AppDb>(context, listen: false)
+          .getChatMessage(chatPageController.curruntPage),
+      // future: Provider.of<AppDb>(context, listen: false).initChatMessage(),
       builder: (context, snapshot) {
         final List<ChatMessageData>? chatMssages = snapshot.data;
 
@@ -96,6 +112,7 @@ class _ChatPageState extends State<ChatPage> {
         if (chatMssages != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (chatPageController.messages.isEmpty) {
+              print(chatMssages);
               chatPageController.initMassage(chatMssages);
             }
           });
@@ -107,6 +124,7 @@ class _ChatPageState extends State<ChatPage> {
                   shrinkWrap: true,
                   reverse: true,
                   order: GroupedListOrder.DESC,
+                  controller: _scrollController,
                   padding: const EdgeInsets.all(8),
                   elements: value.messages,
                   groupBy: (message) => DateTime(

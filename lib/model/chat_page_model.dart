@@ -8,14 +8,23 @@ class ChatPageModel {
   );
 
   dynamic _gptMessage = '';
-  final List<MessageModel> _messages = [];
+  List<MessageModel> _messages = [];
+
   bool _gptLoding = false;
 
+  //현재페이지
+  int _currentPage = 1;
+
   get gptMessage => _gptMessage;
-  get messages => _messages;
+  List<MessageModel> get messages => _messages;
+  int get currentPage => _currentPage;
   bool get gptLoding => _gptLoding;
 
   set gptLoding(bool loding) => _gptLoding = loding;
+
+  set currentPage(int currentPage) => _currentPage = currentPage;
+
+  set messages(List<MessageModel> newMessages) => _messages = newMessages;
 
   Future<String> getGptApi(String message) async {
     _gptMessage = await GptApi()?.getChatApi(message: message);

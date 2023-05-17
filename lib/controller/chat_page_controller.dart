@@ -16,7 +16,9 @@ class ChatPageController extends ChangeNotifier {
   String get gptMessage => _model.gptMessage;
   bool get gptLoding => _model.gptLoding;
   List<MessageModel> get messages => _model.messages;
+  int get curruntPage => _model.currentPage;
 
+  //db 초기화
   void initAppDb(AppDb db) {
     _appDb = db;
   }
@@ -36,7 +38,11 @@ class ChatPageController extends ChangeNotifier {
     }
   }
 
+  //ui가 처음그려질때 가져온 메세지값을 ui에 띄우기 위한 함수
   void initMassage(List<ChatMessageData> chatMssages) {
+    //ui가 처음 그려질때의 값을 가져와서
+    //parseMessage함수에서 반복문을 통해서
+    //messages에 값을 더하기 위한 함수
     parseMessage(chatMssages);
     update();
   }
@@ -71,6 +77,37 @@ class ChatPageController extends ChangeNotifier {
     update();
   }
 
+  //다음페이지의 값을 가져오기위한 페이징 함수
+  void nextPage(int nextPage) async {
+    _model.currentPage = nextPage;
+
+    //다음페이지의 메세지를 가져오는 변수
+    List<ChatMessageData>? nextPageMessages =
+        await _appDb?.getChatMessage(_model.currentPage);
+
+    //다음페이지에서 가져온값이 null이아니면
+    if (nextPageMessages!.isNotEmpty) {
+      //다음페이지에서 가져온 메세지값을 저장하기 위한 변수
+      List<MessageModel> nextMessage = [];
+
+      for (var element in nextPageMessages) {
+        MessageModel messageModel = MessageModel(
+          text: element.message,
+          dateTime: element.messageDateTime,
+          isSentByMe: element.myMessage,
+        );
+
+        //다음페이지에 가져온 메세지값을 저장하기위한 변수
+        nextMessage.add(messageModel);
+      }
+
+      //_model.messages의 기존 메세지에 다음페이지 값을 배열에 더하기위한 기능
+      _model.messages = List.from(nextMessage)..addAll(messages);
+    }
+    update();
+  }
+
+  //gpt api의 값을 불러워서 ui에 반영하는 함수
   Future<void> getGptApi(String message) async {
     _model.gptLoding = true;
 

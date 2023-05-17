@@ -22,9 +22,27 @@ class AppDb extends _$AppDb {
   @override
   int get schemaVersion => 1;
 
-  Future<List<ChatMessageData>> getChatMessage() async {
-    // List<ChatMessageData>? getMessage = await select(chatMessage).get();
-    return await select(chatMessage).get();
+  Future<List<ChatMessageData>> getChatMessage(int pageNum) async {
+    // final countResult = await select(chatMessage).get();
+
+    //한 화면에 10개 항목을 보여주겠다.
+    final pageSize = 10; // 페이지당 항목 수
+
+    final offset = (pageNum - 1) * pageSize;
+
+    // print(countResult.length);
+    List<ChatMessageData> db_messages = await (select(chatMessage)
+          ..orderBy([
+            (t) => OrderingTerm(
+                expression: t.messageDateTime, mode: OrderingMode.desc)
+          ])
+          ..limit(pageSize, offset: offset))
+        .get();
+
+    //db에서 가져온값을 순서를 반전시킨다.
+    //반전 시키는 이유는 chat_page의 GroupedListView에서 한번더 반전시키기 때문에
+    db_messages = List.from(db_messages.reversed);
+    return db_messages;
   }
 
   Future<int> saveMessage(ChatMessageCompanion entity) async {
