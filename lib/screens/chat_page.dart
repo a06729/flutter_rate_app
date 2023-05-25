@@ -27,9 +27,13 @@ class _ChatPageState extends State<ChatPage> {
 
   FocusNode textFildFocus = FocusNode();
 
+  //GroupedListView의 스크롤시 작동하는 이벤트 함수
   _scrollListener() {
     if (_scrollController.position.atEdge) {
+      //스크롤이 제일 위로 올라갔을때 반응한다.
       if (_scrollController.position.pixels != 0) {
+        //chatPageController.curruntPage의 값을 1증가시킨다.
+        //다음페이지로 증가시킨 값을 nextPage함수에 파라미터로 보낸다.
         int currentPage = chatPageController.curruntPage + 1;
         chatPageController.nextPage(currentPage);
       }
@@ -112,7 +116,7 @@ class _ChatPageState extends State<ChatPage> {
         if (chatMssages != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (chatPageController.messages.isEmpty) {
-              print(chatMssages);
+              // print(chatMssages);
               chatPageController.initMassage(chatMssages);
             }
           });

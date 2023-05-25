@@ -78,7 +78,11 @@ class ChatPageController extends ChangeNotifier {
   }
 
   //다음페이지의 값을 가져오기위한 페이징 함수
+  //ui업데이트까지 진행한다.
   void nextPage(int nextPage) async {
+    //_model.currentPage에 nextPage를 넣으면서
+    //초기값 1페이지에서 2페이지로 증가시키게 된다.
+    //그값은 provider에 저장이된다.
     _model.currentPage = nextPage;
 
     //다음페이지의 메세지를 가져오는 변수

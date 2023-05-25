@@ -319,6 +319,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   logger.d("로그인 되지 않음");
                   Get.toNamed('/loginPage');
                 }
+              } else if (index == 2) {
+                Get.toNamed("/purchasesPage");
               }
             },
             items: [
@@ -335,6 +337,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   color: value.darkMod ? Colors.white : Colors.black,
                 ),
                 label: 'AI 채팅',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.chat,
+                  color: value.darkMod ? Colors.white : Colors.black,
+                ),
+                label: '상품',
               ),
             ]),
       ),

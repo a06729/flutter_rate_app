@@ -7,6 +7,8 @@ import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/hive/rate_model.dart';
 import 'package:exchange_rate_app/screens/chat_page.dart';
 import 'package:exchange_rate_app/screens/login_page.dart';
+import 'package:exchange_rate_app/screens/purchases_page.dart';
+import 'package:exchange_rate_app/services/purchase_api.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:exchange_rate_app/screens/home.dart';
@@ -17,8 +19,14 @@ import 'package:provider/provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:get/get.dart';
 
+// final _purchasesConfig =
+//     PurchasesConfiguration('goog_bMqcaDVsPEVQLuCkzqPXEpVfiPo');
+
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // await Purchases.setLogLevel(LogLevel.debug);
+  // await Purchases.configure(_purchasesConfig);
+  await PurchaseApi.init();
   KakaoSdk.init(
       nativeAppKey: '2e7ffbc174951dde4da1016d119d72db',
       javaScriptAppKey: '1ea9d2e339911d80ac2511ac44838d18');
@@ -114,6 +122,10 @@ class _MyAppState extends State<MyApp> {
               name: "/chatPage",
               page: () => const ChatPage(),
               transition: Transition.downToUp,
+            ),
+            GetPage(
+              name: '/purchasesPage',
+              page: () => const PurchasesPage(),
             ),
           ],
           title: '환율나우',
