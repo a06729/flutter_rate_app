@@ -1,5 +1,6 @@
 import 'package:exchange_rate_app/services/purchase_api.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import '../widgets/pay_wall_widget.dart';
 
 class PurchasesPage extends StatefulWidget {
@@ -19,7 +20,13 @@ class _PurchasesPageState extends State<PurchasesPage> {
           children: [
             TextButton(
               onPressed: () async {
+                // final List<ProductDetails> productDetails =
+                //     await PurchaseApi.fetch();
                 await fetchOffers();
+                // PurchaseParam purchaseParam =
+                //     PurchaseParam(productDetails: productDetails[0]);
+                // await InAppPurchase.instance
+                //     .buyConsumable(purchaseParam: purchaseParam);
               },
               child: Text("상품"),
             )
@@ -29,7 +36,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
     );
   }
 
-  showSheet(packages) {
+  showSheet(List<ProductDetails> packages) {
     return showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -46,7 +53,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
   }
 
   Future fetchOffers() async {
-    final offerings = await PurchaseApi.fetchOffers(all: true);
+    final offerings = await PurchaseApi.fetch();
     if (offerings.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -54,10 +61,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
         ),
       );
     } else {
-      final packages = offerings
-          .map((offer) => offer.availablePackages)
-          .expand((pair) => pair)
-          .toList();
+      final packages = offerings;
       showSheet(packages);
     }
   }

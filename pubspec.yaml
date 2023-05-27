@@ -60,7 +60,7 @@ dependencies:
   drift: ^2.7.0
   sqlite3_flutter_libs: ^0.5.0
   path: ^1.8.2
-  purchases_flutter: ^4.12.0
+  in_app_purchase: ^3.1.7
 
 dev_dependencies:
   flutter_test:

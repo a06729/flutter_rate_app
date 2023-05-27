@@ -19,14 +19,9 @@ import 'package:provider/provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:get/get.dart';
 
-// final _purchasesConfig =
-//     PurchasesConfiguration('goog_bMqcaDVsPEVQLuCkzqPXEpVfiPo');
-
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  // await Purchases.setLogLevel(LogLevel.debug);
-  // await Purchases.configure(_purchasesConfig);
-  await PurchaseApi.init();
+
   KakaoSdk.init(
       nativeAppKey: '2e7ffbc174951dde4da1016d119d72db',
       javaScriptAppKey: '1ea9d2e339911d80ac2511ac44838d18');

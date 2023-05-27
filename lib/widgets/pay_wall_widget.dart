@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 
 class PaywllWidget extends StatefulWidget {
   final String title;
   final String description;
-  final List<Package> packages;
-  final ValueChanged<Package> onClickedPackage;
+  final List<ProductDetails> packages;
+  final ValueChanged<ProductDetails> onClickedPackage;
   const PaywllWidget({
     super.key,
     required this.title,
@@ -51,14 +51,14 @@ class _PaywllWidgetState extends State<PaywllWidget> {
     );
   }
 
-  Widget buildPackage(BuildContext context, Package package) {
-    final product = package.storeProduct;
+  Widget buildPackage(BuildContext context, ProductDetails package) {
+    // final product = package.storeProduct;
 
     return Card(
       child: ListTile(
-        title: Text(product.title),
-        subtitle: Text(product.description),
-        trailing: Text(product.priceString),
+        title: Text(package.title),
+        subtitle: Text(package.description),
+        trailing: Text(package.price),
         onTap: () => widget.onClickedPackage(package),
       ),
     );
