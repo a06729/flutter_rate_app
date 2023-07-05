@@ -50,6 +50,7 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseAuthException catch (error) {
       throw FirebaseAuthException(code: error.code);
     } on PlatformException catch (error) {
+      await FirebaseAuth.instance.signOut();
       throw PlatformException(code: error.code);
     }
 

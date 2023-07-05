@@ -87,6 +87,7 @@ flutter {
 }
 
 dependencies {
+    // implementation 'androidx.core:core-ktx:1.9.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.android.gms:play-services-ads:21.5.0'
     implementation 'com.android.support:multidex:1.0.3'

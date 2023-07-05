@@ -36,6 +36,7 @@ class SocialLogin {
           logger.d("카카오톡 설치 구간 코드 에러");
           logger.d("로그인에러:$e");
           await kakao.UserApi.instance.unlink();
+          await FirebaseAuth.instance.signOut();
         }
       } else {
         try {
@@ -57,6 +58,7 @@ class SocialLogin {
           logger.d("code:${code.toString()}");
           logger.d("로그인에러:$e");
           await kakao.UserApi.instance.unlink();
+          await FirebaseAuth.instance.signOut();
         }
       }
     } catch (e) {
