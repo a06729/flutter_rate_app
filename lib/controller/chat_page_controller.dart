@@ -1,9 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/model/chat_page_model.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:logger/logger.dart';
 
 class ChatPageController extends ChangeNotifier {
   late final ChatPageModel _model;
@@ -113,6 +116,11 @@ class ChatPageController extends ChangeNotifier {
 
   //gpt api의 값을 불러워서 ui에 반영하는 함수
   Future<void> getGptApi(String message) async {
+    String text = "";
+    var logger = Logger(
+      printer: PrettyPrinter(),
+    );
+
     _model.gptLoding = true;
 
     //유제 메세지 화면에 업데이트
@@ -121,14 +129,45 @@ class ChatPageController extends ChangeNotifier {
     //유저 메세지 sqlite에 저장
     saveUserMassage(message);
 
-    String gptMsg = await _model.getGptApi(message);
+    // String gptMsg = await _model.getGptApi(message);
+    var streamData = await _model.getGptStreamApi(message);
+
+    StreamTransformer<Uint8List, List<int>> unit8Transformer =
+        StreamTransformer.fromHandlers(
+      handleData: (data, sink) {
+        sink.add(List<int>.from(data));
+      },
+    );
+    streamData.data?.stream
+        .transform(unit8Transformer)
+        .transform(const Utf8Decoder())
+        .transform(const LineSplitter())
+        .listen((event) {
+      logger.d("gptStream:$event");
+      text = "$text$event\n";
+    }).onDone(() {
+      MessageModel messageModel = MessageModel(
+          text: text,
+          dateTime: DateTime.now(),
+          isSentByMe: false,
+          newMassage: true);
+
+      _model.messages.add(messageModel);
+      //로딩 종료 업데이트
+      _model.gptLoding = false;
+
+      //gpt 메세지 sqllite에 저장
+      saveGptMassage(text);
+
+      update();
+    });
 
     //로딩 종료 업데이트
-    _model.gptLoding = false;
+    // _model.gptLoding = false;
 
     //gpt 메세지 sqllite에 저장
-    saveGptMassage(gptMsg);
+    // saveGptMassage(gptMsg);
 
-    update();
+    // update();
   }
 }

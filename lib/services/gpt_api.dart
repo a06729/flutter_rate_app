@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GptApi {
   final String baseUrl =
@@ -22,9 +25,44 @@ class GptApi {
           jsonDecode(utf8.decode(response.bodyBytes));
       // final json = LatestRateModel.fromJson(map);
       logger.d("chatGpt결과:${dataMap['content']}");
+      // await getStreamChatApi(message: message);
+      // await getStreamChatApi(message: message);
+
       return dataMap;
     } else {
       return null;
     }
+  }
+
+  Future<Response<ResponseBody>> getStreamChatApi(
+      {required String message}) async {
+    var logger = Logger(
+      printer: PrettyPrinter(),
+    );
+    String url = dotenv.get("SERVER_URL");
+    Response<ResponseBody> rs = await Dio().post<ResponseBody>(
+      "$url/gpt/chat/stream/$message",
+      options: Options(headers: {
+        "Accept": "text/event-stream",
+        "Cache-Control": "no-cache",
+      }, responseType: ResponseType.stream), // set responseType to `stream`
+    );
+
+    // StreamTransformer<Uint8List, List<int>> unit8Transformer =
+    //     StreamTransformer.fromHandlers(
+    //   handleData: (data, sink) {
+    //     sink.add(List<int>.from(data));
+    //   },
+    // );
+
+    // rs.data?.stream
+    //     .transform(unit8Transformer)
+    //     .transform(const Utf8Decoder())
+    //     .transform(const LineSplitter())
+    //     .listen((event) {
+    //   // logger.d("gptStream:${event}");
+    // });
+
+    return rs;
   }
 }

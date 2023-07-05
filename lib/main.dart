@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
 import 'package:exchange_rate_app/controller/login_page_controller.dart';
@@ -8,8 +11,8 @@ import 'package:exchange_rate_app/hive/rate_model.dart';
 import 'package:exchange_rate_app/screens/chat_page.dart';
 import 'package:exchange_rate_app/screens/login_page.dart';
 import 'package:exchange_rate_app/screens/purchases_page.dart';
-import 'package:exchange_rate_app/services/purchase_api.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:exchange_rate_app/screens/home.dart';
 import 'package:flutter/material.dart';
@@ -29,14 +32,19 @@ Future<void> main() async {
   MobileAds.instance.initialize();
   await Firebase.initializeApp();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  // if (kReleaseMode) {
-  //   // Is Release Mode??
-  //   print('릴리즈 mode');
-  // } else {
-  //   print('디버깅 mode');
-  // }
+
   await Hive.initFlutter();
   Hive.registerAdapter(RateModelAdapter());
+
+  if (kReleaseMode) {
+    // Is Release Mode??
+    print('릴리즈 mode');
+    await dotenv.load(fileName: "assets/.env");
+  } else {
+    HttpOverrides.global = MyHttpOverrides();
+    await dotenv.load(fileName: "assets/.env_development");
+    print('디버깅 mode');
+  }
 
   runApp(MultiProvider(
     providers: [
@@ -136,5 +144,14 @@ class _MyAppState extends State<MyApp> {
         );
       },
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

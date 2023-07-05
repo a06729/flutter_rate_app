@@ -1,3 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
+import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/services/gpt_api.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:logger/logger.dart';
@@ -25,6 +31,11 @@ class ChatPageModel {
   set currentPage(int currentPage) => _currentPage = currentPage;
 
   set messages(List<MessageModel> newMessages) => _messages = newMessages;
+
+  Future<Response<ResponseBody>> getGptStreamApi(String message) async {
+    var streamRespons = await GptApi().getStreamChatApi(message: message);
+    return streamRespons;
+  }
 
   Future<String> getGptApi(String message) async {
     _gptMessage = await GptApi()?.getChatApi(message: message);

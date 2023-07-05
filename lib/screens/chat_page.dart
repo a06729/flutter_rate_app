@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/db/app_db.dart';
@@ -7,6 +12,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:exchange_rate_app/styles/chat_page_style.dart';
 
@@ -22,6 +28,10 @@ class _ChatPageState extends State<ChatPage> {
   late MessageModel message;
   late ChatPageController chatPageController;
   late TheamController theamController;
+  // StreamController<String> _responseStreamController =
+  //     StreamController<String>();
+
+  late String msg;
 
   final _scrollController = ScrollController();
 
@@ -48,7 +58,6 @@ class _ChatPageState extends State<ChatPage> {
     _scrollController.addListener(_scrollListener);
     chatPageController =
         Provider.of<ChatPageController>(context, listen: false);
-
     super.initState();
   }
 
@@ -57,8 +66,42 @@ class _ChatPageState extends State<ChatPage> {
     textFieldController.dispose();
     textFildFocus.dispose();
     _scrollController.dispose();
+    // _responseStreamController.close();
     super.dispose();
   }
+
+  // void fetchStreamedResponse() async {
+  //   String responseMessage = "";
+  //   var logger = Logger(
+  //     printer: PrettyPrinter(),
+  //   );
+  //   var url = 'http://10.0.2.2:8000/gpt/chat/stream/$msg';
+  //   StreamTransformer<Uint8List, List<int>> unit8Transformer =
+  //       StreamTransformer.fromHandlers(
+  //     handleData: (data, sink) {
+  //       sink.add(List<int>.from(data));
+  //     },
+  //   );
+  //   Response<ResponseBody> rs = await Dio().post<ResponseBody>(
+  //     url,
+  //     options: Options(headers: {
+  //       "Accept": "text/event-stream",
+  //       "Cache-Control": "no-cache",
+  //     }, responseType: ResponseType.stream), // set responseType to `stream`
+  //   );
+
+  //   rs.data?.stream
+  //       .transform(unit8Transformer)
+  //       .transform(const Utf8Decoder())
+  //       .transform(const LineSplitter())
+  //       .listen((data) {
+  //     logger.d("streamData:$data");
+  //     responseMessage = "$responseMessage$data\n";
+  //     _responseStreamController.sink.add(responseMessage);
+  //   }).onDone(() {
+  //     _responseStreamController.close();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -236,10 +279,11 @@ class _ChatPageState extends State<ChatPage> {
         ),
         IconButton(
           onPressed: () async {
-            final String msg = textFieldController.text;
+            msg = textFieldController.text;
             if (textFieldController.text != "") {
               textFieldController.text = "";
               await chatPageController.getGptApi(msg);
+              // fetchStreamedResponse();
             }
           },
           icon: const Icon(Icons.send),
