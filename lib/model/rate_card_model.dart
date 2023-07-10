@@ -11,6 +11,7 @@ class RateCardModel {
   // final List _cardInfoList = [];
   //환율정보 변수
   late RateInfo rateInfo;
+
   //환율 카드 기본 정보를 넣기 위한 변수
   late List<Map<String, dynamic>> _rateCardInfoDefault;
 
@@ -48,7 +49,9 @@ class RateCardModel {
 
   Future<void> reorderRateCard(int newIndex, item) async {
     rateCardbox = await Hive.openBox<RateModel>('rateCardBox');
+    logger.d("아이템:${item}");
     _rateCardInfoDefault.insert(newIndex, item);
+    logger.d("순서변경:${_rateCardInfoDefault}");
     rateCardbox.put('cardOrder', RateModel(rates: _rateCardInfoDefault));
   }
 

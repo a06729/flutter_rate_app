@@ -24,22 +24,27 @@ class RateCardController extends ChangeNotifier {
   }
 
   //환율 카드 순서 변경하는 함수
+  //순서 변경값을 hive db에 저장하는 함수
   Future<void> reorderRateCard(newIndex, item) async {
     await _model.reorderRateCard(newIndex, item);
     update();
   }
 
+  //환율 카드에 기존에 환율 계산값 0으로 초기화 하는 기능
   Future<void> initRateCardData() async {
     final rateCardBox = await Hive.openBox<RateModel>('rateCardBox');
     final cardOrderValue = rateCardBox.get('cardOrder');
     if (cardOrderValue != null) {
       var initRateCardData = cardOrderValue.rates.map((item) {
-        // logger.d('initRateCardData:${item}');
+        logger.d('initRateCardData:${item}');
         //기존 환율 정보를 0 초기화
         item['rateAmout'] = '0';
         return item;
       });
       _model.initRateCard(initRateCardData.toList());
+      update();
+    } else {
+      _model.initRateCard(_model.rateInfo.rateCardInfo);
     }
   }
 

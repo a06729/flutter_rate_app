@@ -1,3 +1,4 @@
+import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TheamModel {
@@ -11,6 +12,7 @@ class TheamModel {
   Future<void> changeMode() async {
     final prefs = await SharedPreferences.getInstance();
     final switchMode = prefs.getBool('darkMode');
+    logger.d("스위칭 다크모드:${switchMode}");
     if (switchMode != null) {
       if (switchMode == true) {
         _darkMode = false;
@@ -20,6 +22,7 @@ class TheamModel {
         await prefs.setBool('darkMode', true);
       }
     } else {
+      await prefs.setBool('darkMode', false);
       _darkMode = false;
     }
   }

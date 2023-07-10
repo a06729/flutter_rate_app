@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
@@ -23,7 +23,6 @@ import 'package:get/get.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-
   KakaoSdk.init(
       nativeAppKey: '2e7ffbc174951dde4da1016d119d72db',
       javaScriptAppKey: '1ea9d2e339911d80ac2511ac44838d18');
@@ -37,12 +36,12 @@ Future<void> main() async {
 
   if (kReleaseMode) {
     // Is Release Mode??
-    print('릴리즈 mode');
+    logger.d("릴리즈 mode");
     await dotenv.load(fileName: "assets/.env");
   } else {
-    HttpOverrides.global = MyHttpOverrides();
+    // HttpOverrides.global = MyHttpOverrides();
     await dotenv.load(fileName: "assets/.env_development");
-    print('디버깅 mode');
+    logger.d('디버깅 mode');
   }
 
   runApp(MultiProvider(
@@ -86,13 +85,21 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late TheamController theamController;
+  late RateCardController rateCardController;
   @override
   void initState() {
     theamController = Provider.of<TheamController>(context, listen: false);
-
+    rateCardController =
+        Provider.of<RateCardController>(context, listen: false);
     //설정값을 저정한것을 실행 시키기 위해 함수를 불러온다.
     //휴대폰이 켜지면 유저가 설정한 테마모드를 불러오기위한 것
     theamController.initMode();
+
+    //앱 실행시 이전에 환율 정보 카드 순서
+    //hive db에 값을 기준으로 db에 값이 없으면
+    //초기 화면 순서로 아니면 순서 변경된 걸로 표시하기 위한 함수
+    //앱이 꺼지고 실행됬을때 동작하므로 이전 환율 계산값은 0으로 변경 (초기화)
+    rateCardController.initRateCardData();
 
     //스플래쉬 이미지 실행
     initialization();
@@ -107,6 +114,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    logger.d("테마모드:${theamController.darkMod}");
     return Consumer<TheamController>(
       builder: (context, value, child) {
         return GetMaterialApp(
@@ -146,11 +154,11 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-  }
-}
+// class MyHttpOverrides extends HttpOverrides {
+//   @override
+//   HttpClient createHttpClient(SecurityContext? context) {
+//     return super.createHttpClient(context)
+//       ..badCertificateCallback =
+//           (X509Certificate cert, String host, int port) => true;
+//   }
+// }

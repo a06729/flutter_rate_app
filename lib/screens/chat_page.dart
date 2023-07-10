@@ -1,8 +1,3 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/db/app_db.dart';
@@ -12,7 +7,6 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:exchange_rate_app/styles/chat_page_style.dart';
 
@@ -200,16 +194,31 @@ class _ChatPageState extends State<ChatPage> {
                         ? Alignment.centerRight
                         : Alignment.centerLeft,
                     child: Card(
+                      color: message.isSentByMe
+                          ? Colors.blueAccent
+                          : Colors.blueGrey,
                       elevation: 8,
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: message.isSentByMe
-                            ? Text(message.text)
+                            ? Text(
+                                message.text,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.0,
+                                ),
+                              )
                             : message.newMassage
                                 ? AnimatedTextKit(
                                     repeatForever: false,
                                     animatedTexts: [
-                                      TyperAnimatedText(message.text),
+                                      TyperAnimatedText(message.text,
+                                          speed:
+                                              const Duration(milliseconds: 30),
+                                          textStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16.0,
+                                          )),
                                     ],
                                     onFinished: () {
                                       chatPageController
@@ -217,7 +226,13 @@ class _ChatPageState extends State<ChatPage> {
                                     },
                                     totalRepeatCount: 1,
                                   )
-                                : Text(message.text),
+                                : Text(
+                                    message.text,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
                       ),
                     ),
                   ),
@@ -282,6 +297,7 @@ class _ChatPageState extends State<ChatPage> {
             msg = textFieldController.text;
             if (textFieldController.text != "") {
               textFieldController.text = "";
+              FocusManager.instance.primaryFocus?.unfocus();
               await chatPageController.getGptApi(msg);
               // fetchStreamedResponse();
             }

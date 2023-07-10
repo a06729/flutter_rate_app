@@ -80,6 +80,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //앱 종료시
       case AppLifecycleState.detached: // (5)
         logger.d("## detached");
+        //환전결과 모두 0으로 초기화하는 기능
         await rateCardController.initRateCardData();
         theamController.dispose();
         break;
@@ -138,7 +139,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             onPressed: () async {
                               // final SharedPreferences prefs = await _prefs;
                               // var darkModeValue = prefs.get('darkMode');
-                              // logger.d("$darkModeValue");
+                              // logger.d("${theamController.darkMod}");
                               await theamController.dartMode();
                             },
                             icon: theamController.darkMod

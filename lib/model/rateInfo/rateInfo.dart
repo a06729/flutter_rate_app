@@ -126,7 +126,7 @@ class RateInfo {
     }
   };
 
-  get rateCardInfo {
+  List<Map<String, dynamic>> get rateCardInfo {
     return _rateCardInfo;
   }
 

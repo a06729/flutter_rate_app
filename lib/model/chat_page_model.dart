@@ -1,9 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
-import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/services/gpt_api.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:logger/logger.dart';
