@@ -4,6 +4,7 @@ import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -256,7 +257,7 @@ class _ChatPageState extends State<ChatPage> {
             height: 50,
             child: LoadingIndicator(
               indicatorType: Indicator.ballPulseSync,
-              colors: [Colors.white, Colors.red, Colors.green],
+              colors: [Colors.blue, Colors.red, Colors.green],
               pathBackgroundColor: Colors.transparent,
               backgroundColor: Colors.transparent,
             ),
@@ -272,40 +273,69 @@ class _ChatPageState extends State<ChatPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
-          child: TextField(
-            focusNode: textFildFocus,
-            controller: textFieldController,
-            textInputAction: TextInputAction.newline,
-            maxLines: null,
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.all(12),
-              hintText: '텍스트 입력',
-              enabledBorder: OutlineInputBorder(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              focusNode: textFildFocus,
+              controller: textFieldController,
+              textInputAction: TextInputAction.newline,
+              maxLines: null,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(10),
+                hintText: '텍스트 입력',
+                enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                        width: 3, color: ChatPageStyle.chatInputBorderColor),
+                    borderRadius: BorderRadius.circular(10)),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
                   borderSide: const BorderSide(
                       width: 3, color: ChatPageStyle.chatInputBorderColor),
-                  borderRadius: BorderRadius.circular(10)),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                    width: 3, color: ChatPageStyle.chatInputBorderColor),
+                ),
               ),
             ),
           ),
         ),
-        IconButton(
-          onPressed: () async {
-            msg = textFieldController.text;
-            if (textFieldController.text != "") {
-              textFieldController.text = "";
-              FocusManager.instance.primaryFocus?.unfocus();
-              await chatPageController.getGptApi(msg);
-              // fetchStreamedResponse();
-            }
-          },
-          icon: const Icon(Icons.send),
-          iconSize: 30,
-        )
+        sendIcon(),
       ],
+    );
+  }
+
+  //메세지 보내기 아이콘 그려주는 함수
+  SizedBox sendIcon() {
+    return SizedBox(
+      width: 50,
+      child: Consumer<ChatPageController>(
+        builder: (context, value, child) {
+          if (value.gptLoding) {
+            //gpt 값을 받아오는동안 로딩 아이콘이 나오도록 한다
+            return const SizedBox(
+              width: 25,
+              child: LoadingIndicator(
+                indicatorType: Indicator.ballRotateChase,
+                colors: [Colors.blue, Colors.red, Colors.green],
+                pathBackgroundColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+              ),
+            );
+          } else {
+            //서버로 메세지 입력값을 보내는 버튼
+            return IconButton(
+              onPressed: () async {
+                msg = textFieldController.text;
+                if (textFieldController.text != "") {
+                  textFieldController.text = "";
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  await chatPageController.getGptApi(msg);
+                  // fetchStreamedResponse();
+                }
+              },
+              icon: const Icon(Icons.send),
+              iconSize: 35,
+            );
+          }
+        },
+      ),
     );
   }
 }
