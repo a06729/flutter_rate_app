@@ -4,7 +4,6 @@ import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:loading_indicator/loading_indicator.dart';

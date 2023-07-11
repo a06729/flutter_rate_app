@@ -11,7 +11,8 @@ class TheamController extends ChangeNotifier {
   get darkMod => _model.darkMode;
 
   Future<void> dartMode() async {
-    await _model.changeMode().then((value) => update());
+    await _model.changeMode();
+    update();
   }
 
   //초기 실행시 테마 설정값을 가져와서 업데이트하는 함수
