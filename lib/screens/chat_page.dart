@@ -1,6 +1,7 @@
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/db/app_db.dart';
+import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -173,22 +174,7 @@ class _ChatPageState extends State<ChatPage> {
                     message.dateTime.month,
                     message.dateTime.day,
                   ),
-                  groupHeaderBuilder: (MessageModel message) => SizedBox(
-                    height: 40,
-                    child: Center(
-                        child: Card(
-                      color: Colors.red,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          DateFormat.yMMM().format(message.dateTime),
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    )),
-                  ),
+                  groupHeaderBuilder: groupHeaderWidget,
                   itemBuilder: (context, MessageModel message) => Align(
                     alignment: message.isSentByMe
                         ? Alignment.centerRight
@@ -244,6 +230,26 @@ class _ChatPageState extends State<ChatPage> {
         //db값이 없을때 표시데는 글자
         return const Text("no Data");
       },
+    );
+  }
+
+  //그룹핑 하는 날짜 기준으로 표시하는 헤더 위젯
+  Widget groupHeaderWidget(MessageModel message) {
+    return SizedBox(
+      height: 40,
+      child: Center(
+          child: Card(
+        color: Colors.red,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            DateFormat("yyyy-MM").format(message.dateTime),
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      )),
     );
   }
 
