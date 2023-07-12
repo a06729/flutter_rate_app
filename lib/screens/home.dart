@@ -321,7 +321,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   Get.toNamed('/loginPage');
                 }
               } else if (index == 2) {
-                Get.toNamed("/purchasesPage");
+                if (FirebaseAuth.instance.currentUser != null) {
+                  Get.toNamed("/profilePage");
+                } else {
+                  Get.toNamed("/loginPage");
+                }
               }
             },
             items: [
@@ -341,10 +345,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.chat,
+                  Icons.person_pin_outlined,
                   color: value.darkMod ? Colors.white : Colors.black,
                 ),
-                label: '상품',
+                label: '프로필',
               ),
             ]),
       ),

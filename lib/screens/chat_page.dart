@@ -1,7 +1,6 @@
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/db/app_db.dart';
-import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -290,7 +289,9 @@ class _ChatPageState extends State<ChatPage> {
                 hintText: '텍스트 입력',
                 enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
-                        width: 3, color: ChatPageStyle.chatInputBorderColor),
+                      width: 1,
+                      color: ChatPageStyle.chatInputBorderColor,
+                    ),
                     borderRadius: BorderRadius.circular(10)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),

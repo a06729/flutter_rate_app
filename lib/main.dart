@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:exchange_rate_app/screens/profile_page.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
@@ -39,7 +42,7 @@ Future<void> main() async {
     logger.d("릴리즈 mode");
     await dotenv.load(fileName: "assets/.env");
   } else {
-    // HttpOverrides.global = MyHttpOverrides();
+    HttpOverrides.global = MyHttpOverrides();
     await dotenv.load(fileName: "assets/.env_development");
     logger.d('디버깅 mode');
   }
@@ -134,6 +137,11 @@ class _MyAppState extends State<MyApp> {
               transition: Transition.downToUp,
             ),
             GetPage(
+              name: "/profilePage",
+              page: () => const ProfilePage(),
+              transition: Transition.downToUp,
+            ),
+            GetPage(
               name: '/purchasesPage',
               page: () => const PurchasesPage(),
             ),
@@ -154,11 +162,11 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-// class MyHttpOverrides extends HttpOverrides {
-//   @override
-//   HttpClient createHttpClient(SecurityContext? context) {
-//     return super.createHttpClient(context)
-//       ..badCertificateCallback =
-//           (X509Certificate cert, String host, int port) => true;
-//   }
-// }
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
