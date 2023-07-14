@@ -36,6 +36,10 @@ class _SocialSquareTitleState extends State<SocialSquareTitle> {
     await socialLogin.kakaoLogin();
   }
 
+  Future<void> signInWithLine() async {
+    await socialLogin.lineLogin();
+  }
+
   Future<void> signInWithGoogle() async {
     try {
       // Trigger the authentication flow
@@ -88,6 +92,12 @@ class _SocialSquareTitleState extends State<SocialSquareTitle> {
                 .onError(
                   (error, stackTrace) => loginController.loginLodding(false),
                 );
+          } else if (widget.socialType.text == SocialType.line.text) {
+            loginController.loginLodding(true);
+            await signInWithLine()
+                .then((value) => loginController.loginLodding(false))
+                .onError(
+                    (error, stackTrace) => loginController.loginLodding(false));
           }
           loginController.loginLodding(false);
         },

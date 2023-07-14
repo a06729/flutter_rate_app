@@ -1,6 +1,7 @@
 enum SocialType {
   kakao("kakao"),
-  google("google");
+  google("google"),
+  line("line");
 
   final String text;
   const SocialType(this.text);

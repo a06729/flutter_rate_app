@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:exchange_rate_app/screens/email_form_page.dart';
 import 'package:exchange_rate_app/screens/profile_page.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,6 +16,7 @@ import 'package:exchange_rate_app/screens/login_page.dart';
 import 'package:exchange_rate_app/screens/purchases_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:exchange_rate_app/screens/home.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,8 @@ Future<void> main() async {
   KakaoSdk.init(
       nativeAppKey: '2e7ffbc174951dde4da1016d119d72db',
       javaScriptAppKey: '1ea9d2e339911d80ac2511ac44838d18');
+
+  LineSDK.instance.setup("1661121703").then((_) => {logger.d("LineSDK 준비완료")});
 
   MobileAds.instance.initialize();
   await Firebase.initializeApp();
@@ -144,6 +148,10 @@ class _MyAppState extends State<MyApp> {
             GetPage(
               name: '/purchasesPage',
               page: () => const PurchasesPage(),
+            ),
+            GetPage(
+              name: '/emailFormPage',
+              page: () => const EmailFormPage(),
             ),
           ],
           title: '환율나우',

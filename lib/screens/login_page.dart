@@ -135,6 +135,13 @@ class _LoginPageState extends State<LoginPage> {
                     imagePath: 'assets/icons/kakao-icon.png',
                     socialType: SocialType.kakao,
                   ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  SocialSquareTitle(
+                    imagePath: 'assets/icons/line-icon.png',
+                    socialType: SocialType.line,
+                  ),
                 ],
               ),
               const SizedBox(

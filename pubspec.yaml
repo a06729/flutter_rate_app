@@ -62,6 +62,7 @@ dependencies:
   path: ^1.8.2
   in_app_purchase: ^3.1.7
   flutter_dotenv: ^5.1.0
+  flutter_line_sdk: ^2.3.3
 
 dev_dependencies:
   flutter_test:
@@ -123,6 +124,7 @@ flutter:
   assets:
     - assets/icons/google-icon.jpg
     - assets/icons/kakao-icon.png
+    - assets/icons/line-icon.png
     - assets/.env
     - assets/.env_development
 
