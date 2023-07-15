@@ -14,14 +14,15 @@ import 'package:get/get.dart';
 class SocialDataModel {
   final String token; //서버에서 받은 커스텀 토큰값
   final bool status; //에러 있고 없을을 알리는 변수
-  final String errorMessage; //서버에서 받은 에러 메세지
-
-  SocialDataModel(this.token, this.status, this.errorMessage);
+  final String? errorMessage; //서버에서 받은 에러 메세지
+  final bool existUser; //이미 존재하는 유저인지 아닌지 구별하는 변수
+  SocialDataModel(this.token, this.status, this.errorMessage, this.existUser);
 
   SocialDataModel.formJson(Map<String, dynamic> json)
       : token = json['token'],
         status = json['status'],
-        errorMessage = json['errorMessage'];
+        errorMessage = json['errorMessage'],
+        existUser = json['existUser'];
 }
 
 //소셜로그인 함수 모은 클래스
@@ -62,7 +63,7 @@ class SocialLogin {
           } else {
             Get.snackbar(
               "로그인 에러",
-              jsonData.errorMessage,
+              jsonData.errorMessage!,
               snackPosition: SnackPosition.BOTTOM,
               forwardAnimationCurve: Curves.elasticInOut,
               reverseAnimationCurve: Curves.easeOut,
@@ -99,7 +100,7 @@ class SocialLogin {
           } else {
             Get.snackbar(
               "로그인 에러",
-              jsonData.errorMessage,
+              jsonData.errorMessage!,
               snackPosition: SnackPosition.BOTTOM,
               forwardAnimationCurve: Curves.elasticInOut,
               reverseAnimationCurve: Curves.easeOut,
@@ -132,41 +133,54 @@ class SocialLogin {
   Future<void> lineLogin() async {
     try {
       final result = await LineSDK.instance.login();
-      logger.d("라인로그인 데이터:${result}");
       logger.d("라인 아이디:${result.userProfile?.userId}");
       logger.d("라인 닉네임:${result.userProfile?.displayName}");
       logger.d("라인 사진:${result.userProfile?.pictureUrl}");
-      String emailResult = await Get.to(const EmailFormPage());
-      // user id -> result.userProfile?.userId
-      // user name -> result.userProfile?.displayName
-      // user avatar -> result.userProfile?.pictureUrl
-      logger.d("라인 이메일:${result.userProfile?.pictureUrl}");
 
-      final tokenJsonString = await firebaseAuthDataSource.createCustomToken({
-        "uid": result.userProfile?.userId.toString(),
-        "displayName": result.userProfile?.displayName.toString(),
-        "email": emailResult,
-        "photoURL": result.userProfile?.pictureUrl.toString(),
-        "platform": SocialType.line.text
-      });
+      Map<String, dynamic> existUserCheckJson = jsonDecode(
+        await firebaseAuthDataSource
+            .checkExistUserLine(result.userProfile!.userId),
+      );
 
-      Map<String, dynamic> tokenJson = jsonDecode(tokenJsonString);
-
-      SocialDataModel jsonData = SocialDataModel.formJson(tokenJson);
-
-      //성공적으로 로그인 토큰을 받아왔을때
-      if (jsonData.status == true) {
-        await FirebaseAuth.instance.signInWithCustomToken(jsonData.token);
+      SocialDataModel existUserCheckData =
+          SocialDataModel.formJson(existUserCheckJson);
+      //기존 유저가 있으면 바로 CustomToken 생성해서 바로 로그인 처리
+      if (existUserCheckData.existUser == true) {
+        await FirebaseAuth.instance
+            .signInWithCustomToken(existUserCheckData.token);
         Get.offAllNamed('/');
       } else {
-        logger.d(jsonData.errorMessage);
-        Get.snackbar(
-          "로그인 에러",
-          jsonData.errorMessage,
-          snackPosition: SnackPosition.BOTTOM,
-          forwardAnimationCurve: Curves.elasticInOut,
-          reverseAnimationCurve: Curves.easeOut,
-        );
+        // 기존유저가 아닌경우는 이메일 정보를 받은후 커스텀 토큰을 요청해서 로그인 실행
+        String emailResult = await Get.to(const EmailFormPage());
+
+        logger.d("라인 이메일:${result.userProfile?.pictureUrl}");
+
+        final tokenJsonString = await firebaseAuthDataSource.createCustomToken({
+          "uid": result.userProfile?.userId.toString(),
+          "displayName": result.userProfile?.displayName.toString(),
+          "email": emailResult,
+          "photoURL": result.userProfile?.pictureUrl.toString(),
+          "platform": SocialType.line.text
+        });
+
+        Map<String, dynamic> tokenJson = jsonDecode(tokenJsonString);
+
+        SocialDataModel jsonData = SocialDataModel.formJson(tokenJson);
+
+        //성공적으로 로그인 토큰을 받아왔을때
+        if (jsonData.status == true) {
+          await FirebaseAuth.instance.signInWithCustomToken(jsonData.token);
+          Get.offAllNamed('/');
+        } else {
+          logger.d(jsonData.errorMessage);
+          Get.snackbar(
+            "로그인 에러",
+            jsonData.errorMessage!,
+            snackPosition: SnackPosition.BOTTOM,
+            forwardAnimationCurve: Curves.elasticInOut,
+            reverseAnimationCurve: Curves.easeOut,
+          );
+        }
       }
     } on PlatformException catch (e) {
       logger.d("line 로그인 에러:${e.toString()}");

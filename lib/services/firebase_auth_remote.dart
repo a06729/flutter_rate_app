@@ -30,4 +30,14 @@ class FireBaseAuthRemote {
       return utf8.decode(customTokenResponse.bodyBytes);
     }
   }
+
+  Future checkExistUserLine(String uid) async {
+    final url = Uri.parse('$baseUrl/social/line/existUser/$uid');
+    // print("user:${user}");
+    final customTokenResponse = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+    );
+    return utf8.decode(customTokenResponse.bodyBytes);
+  }
 }
