@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:exchange_rate_app/common/social_type.dart';
 import 'package:exchange_rate_app/screens/email_form_page.dart';
 import 'package:exchange_rate_app/services/firebase_auth_remote.dart';
+import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_user.dart' as kakao;
-import 'package:logger/logger.dart';
 import 'package:get/get.dart';
 
 //json 값 직렬화 하기 위해서 만든 클래스
@@ -29,10 +29,7 @@ class SocialDataModel {
 class SocialLogin {
   //소셜로그인에 필요한 파이어베이스 커스텀 토큰을 만들어주는 함수가 있는 클래스
   final firebaseAuthDataSource = FireBaseAuthRemote();
-  //로그
-  var logger = Logger(
-    printer: PrettyPrinter(),
-  );
+
   //카카오톡 로그인 정보를 객체화 한 변수
   kakao.User? kakaoUser;
   Future<void> kakaoLogin() async {
@@ -144,6 +141,7 @@ class SocialLogin {
 
       SocialDataModel existUserCheckData =
           SocialDataModel.formJson(existUserCheckJson);
+
       //기존 유저가 있으면 바로 CustomToken 생성해서 바로 로그인 처리
       if (existUserCheckData.existUser == true) {
         await FirebaseAuth.instance

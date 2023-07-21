@@ -1,15 +1,10 @@
 import 'package:exchange_rate_app/common/social_type.dart';
 import 'package:exchange_rate_app/controller/login_page_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
-import 'package:exchange_rate_app/services/social_login.dart';
 import 'package:exchange_rate_app/widgets/social_square_title.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,46 +15,46 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late TheamController theamController;
-  late SocialLogin socialLogin;
+  // late SocialLogin socialLogin;
   late bool showOverlay;
   @override
   void initState() {
     theamController = Provider.of<TheamController>(context, listen: false);
-    socialLogin = SocialLogin();
+    // socialLogin = SocialLogin();
     showOverlay = false;
     super.initState();
   }
 
-  Future<void> signInWithGoogle() async {
-    try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+  // Future<void> signInWithGoogle() async {
+  //   try {
+  //     // Trigger the authentication flow
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //     // Obtain the auth details from the request
+  //     final GoogleSignInAuthentication? googleAuth =
+  //         await googleUser?.authentication;
+  //     logger.d("idToken:${googleAuth?.idToken}");
+  //     if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
+  //       // Create a new credential
+  //       final credential = GoogleAuthProvider.credential(
+  //         accessToken: googleAuth?.accessToken,
+  //         idToken: googleAuth?.idToken,
+  //       );
+  //       await FirebaseAuth.instance.signInWithCredential(credential);
+  //       // Get.offAllNamed('/');
+  //     }
+  //   } on FirebaseAuthException catch (error) {
+  //     throw FirebaseAuthException(code: error.code);
+  //   } on PlatformException catch (error) {
+  //     await FirebaseAuth.instance.signOut();
+  //     throw PlatformException(code: error.code);
+  //   }
 
-      if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
-        // Create a new credential
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
-        );
-        await FirebaseAuth.instance.signInWithCredential(credential);
-        Get.offAllNamed('/');
-      }
-    } on FirebaseAuthException catch (error) {
-      throw FirebaseAuthException(code: error.code);
-    } on PlatformException catch (error) {
-      await FirebaseAuth.instance.signOut();
-      throw PlatformException(code: error.code);
-    }
+  //   // Once signed in, return the UserCredential
+  // }
 
-    // Once signed in, return the UserCredential
-  }
-
-  Future<void> signInWithKakao() async {
-    await socialLogin.kakaoLogin();
-  }
+  // Future<void> signInWithKakao() async {
+  //   await socialLogin.kakaoLogin();
+  // }
 
   @override
   Widget build(BuildContext context) {

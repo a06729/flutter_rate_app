@@ -28,6 +28,7 @@ import 'package:get/get.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
   KakaoSdk.init(
       nativeAppKey: '2e7ffbc174951dde4da1016d119d72db',
       javaScriptAppKey: '1ea9d2e339911d80ac2511ac44838d18');

@@ -1,5 +1,6 @@
 import 'package:exchange_rate_app/common/social_type.dart';
 import 'package:exchange_rate_app/controller/login_page_controller.dart';
+import 'package:exchange_rate_app/services/firebase_auth_remote.dart';
 import 'package:exchange_rate_app/services/social_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +25,14 @@ class SocialSquareTitle extends StatefulWidget {
 
 class _SocialSquareTitleState extends State<SocialSquareTitle> {
   late SocialLogin socialLogin;
+  late FireBaseAuthRemote _fireBaseAuthRemote;
 
   @override
   void initState() {
     // TODO: implement initState
     socialLogin = SocialLogin();
+    _fireBaseAuthRemote = FireBaseAuthRemote();
+
     super.initState();
   }
 
@@ -54,7 +58,22 @@ class _SocialSquareTitleState extends State<SocialSquareTitle> {
           accessToken: googleAuth?.accessToken,
           idToken: googleAuth?.idToken,
         );
-        await FirebaseAuth.instance.signInWithCredential(credential);
+
+        UserCredential userData =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        bool? newUser = userData.additionalUserInfo?.isNewUser;
+
+        if (newUser == true) {
+          final User? userInstance = FirebaseAuth.instance.currentUser;
+          Map<String, dynamic> userJson = {
+            "uid": userInstance?.uid,
+            "displayName": userInstance?.displayName,
+            "email": userInstance?.email,
+            "photoURL": userInstance?.photoURL,
+          };
+          await _fireBaseAuthRemote.initUserDataNonCustomToken(userJson);
+        }
+
         Get.offAllNamed('/');
       }
     } on FirebaseAuthException catch (error) {

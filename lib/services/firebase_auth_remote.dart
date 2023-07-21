@@ -1,4 +1,5 @@
 import 'package:exchange_rate_app/common/social_type.dart';
+import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -17,6 +18,7 @@ class FireBaseAuthRemote {
         headers: {"Content-Type": "application/json"},
         body: json.encode(user),
       );
+      logger.d("카카오톡 로그인 결과값:${customTokenResponse.body}");
       return customTokenResponse.body;
     } else {
       final url = Uri.parse('$baseUrl/social/line/token');
@@ -31,6 +33,7 @@ class FireBaseAuthRemote {
     }
   }
 
+  //라인으로 로그인시 기존에 가입된 이메일이나 uid가 있는지 확인하는 함수
   Future checkExistUserLine(String uid) async {
     final url = Uri.parse('$baseUrl/social/line/existUser/$uid');
     // print("user:${user}");
@@ -39,5 +42,16 @@ class FireBaseAuthRemote {
       headers: {"Content-Type": "application/json"},
     );
     return utf8.decode(customTokenResponse.bodyBytes);
+  }
+
+  //커스텀 토큰으로 만들어서 로그인한 플랫폼이 아닌
+  //파이어 베이스에 지원하는 소셜로그인시 firebase db에 초기 유저값을 저장하기 위한 함수
+  Future<void> initUserDataNonCustomToken(Map<String, dynamic> userJson) async {
+    final url = Uri.parse('$baseUrl/social/initUserData');
+    await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(userJson),
+    );
   }
 }
