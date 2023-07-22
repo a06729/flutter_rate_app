@@ -54,4 +54,14 @@ class FireBaseAuthRemote {
       body: json.encode(userJson),
     );
   }
+
+  Future<int> userCoinAmount(String? uid) async {
+    final url = Uri.parse('$baseUrl/social/userCoinAmount/${uid}');
+    final response = await http.post(
+      url,
+    );
+    logger.d("response:${response.body}");
+    final dataJson = json.decode(response.body);
+    return dataJson['coin'];
+  }
 }
