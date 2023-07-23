@@ -1,10 +1,13 @@
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/services/firebase_auth_remote.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
+import 'package:exchange_rate_app/services/purchase_api.dart';
 import 'package:exchange_rate_app/services/social_login.dart';
+import 'package:exchange_rate_app/widgets/pay_wall_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -57,11 +60,30 @@ class _ProfilePageState extends State<ProfilePage> {
                   // Color profileBgColor = theamController.darkMod
                   //     ? const Color.fromRGBO(24, 24, 35, 1)
                   //     : const Color.fromRGBO(216, 216, 216, 1);
-                  return profileImageWidget(
-                    context,
-                    photoURL,
-                    snapshot,
-                    textColor,
+                  return Expanded(
+                    child: Column(
+                      children: [
+                        profileImageWidget(
+                          context,
+                          photoURL,
+                          snapshot,
+                          textColor,
+                        ),
+                        ListView(
+                          shrinkWrap: true,
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.shopping_cart),
+                              title: const Text("코인 샵"),
+                              onTap: () async {
+                                await _fetchOffers();
+                              },
+                              trailing: const Icon(Icons.navigate_next),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   );
                 } else {
                   return const Text("");
@@ -114,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
               style: TextStyle(fontSize: 16, color: textColor),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -133,23 +155,54 @@ class _ProfilePageState extends State<ProfilePage> {
                   } else {
                     return Text(
                       snapshot.data.toString(),
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                     );
                   }
                 },
               )
             ],
-          )
+          ),
         ],
       ),
+    );
+  }
+
+  showSheet(List<ProductDetails> packages) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return PaywllWidget(
+          packages: packages,
+          title: '',
+          description: '',
+          onClickedPackage: (packages) async {
+            //purchasePackage함수를 실행해서 구매 정보를 추출하기 위한 함수
+            await PurchaseApi.purchasePackage(packages);
+          },
+        );
+      },
     );
   }
 
   Future<int> _coinCounter() async {
     final User? userInstance = FirebaseAuth.instance.currentUser;
     final String? userUid = userInstance?.uid;
-    logger.d("uid:${userUid}");
+    logger.d("uid:$userUid");
     final userCoinAmount = _fireBaseAuthRemote.userCoinAmount(userUid);
     return userCoinAmount;
+  }
+
+  Future _fetchOffers() async {
+    final offerings = await PurchaseApi().fetch();
+    if (offerings.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("아이템이 없습니다."),
+        ),
+      );
+    } else {
+      final packages = offerings;
+      showSheet(packages);
+    }
   }
 }

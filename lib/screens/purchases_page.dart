@@ -53,7 +53,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
   }
 
   Future fetchOffers() async {
-    final offerings = await PurchaseApi.fetch();
+    final offerings = await PurchaseApi().fetch();
     if (offerings.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
