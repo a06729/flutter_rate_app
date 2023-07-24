@@ -61,10 +61,10 @@ class _PurchasesPageState extends State<PurchasesPage> {
       logger.d(
           "pendingCompletePurchase:${purchaseDetails.pendingCompletePurchase}");
       if (purchaseDetails.pendingCompletePurchase) {
-        await InAppPurchase.instance.completePurchase(purchaseDetails);
         final verificationDataJson =
             json.decode(purchaseDetails.verificationData.localVerificationData);
-        await paymentServerSave(verificationDataJson);
+        await paymentServerSave(verificationDataJson).then((value) async =>
+            await InAppPurchase.instance.completePurchase(purchaseDetails));
         return;
       }
     });
