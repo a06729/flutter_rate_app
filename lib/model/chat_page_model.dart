@@ -17,10 +17,13 @@ class ChatPageModel {
   //현재페이지
   int _currentPage = 1;
 
+  bool _gptRequestError = false;
+
   get gptMessage => _gptMessage;
   List<MessageModel> get messages => _messages;
   int get currentPage => _currentPage;
   bool get gptLoding => _gptLoding;
+  bool get gptRequestError => _gptRequestError;
 
   set gptLoding(bool loding) => _gptLoding = loding;
 

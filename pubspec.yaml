@@ -63,6 +63,7 @@ dependencies:
   in_app_purchase: ^3.1.7
   flutter_dotenv: ^5.1.0
   flutter_line_sdk: ^2.3.3
+  lottie: ^2.5.0
 
 dev_dependencies:
   flutter_test:
@@ -127,6 +128,7 @@ flutter:
     - assets/icons/line-icon.png
     - assets/.env
     - assets/.env_development
+    - assets/lottie/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

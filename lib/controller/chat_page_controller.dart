@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/model/chat_page_model.dart';
+import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class ChatPageController extends ChangeNotifier {
@@ -20,6 +23,7 @@ class ChatPageController extends ChangeNotifier {
   bool get gptLoding => _model.gptLoding;
   List<MessageModel> get messages => _model.messages;
   int get curruntPage => _model.currentPage;
+  bool get gptRequestError => _model.gptRequestError;
 
   //db 초기화
   void initAppDb(AppDb db) {
@@ -117,9 +121,6 @@ class ChatPageController extends ChangeNotifier {
   //gpt api의 값을 불러워서 ui에 반영하는 함수
   Future<void> getGptApi(String message) async {
     String text = "";
-    var logger = Logger(
-      printer: PrettyPrinter(),
-    );
 
     _model.gptLoding = true;
 
@@ -130,37 +131,47 @@ class ChatPageController extends ChangeNotifier {
     saveUserMassage(message);
 
     // String gptMsg = await _model.getGptApi(message);
-    var streamData = await _model.getGptStreamApi(message);
+    try {
+      var streamData = await _model.getGptStreamApi(message);
 
-    StreamTransformer<Uint8List, List<int>> unit8Transformer =
-        StreamTransformer.fromHandlers(
-      handleData: (data, sink) {
-        sink.add(List<int>.from(data));
-      },
-    );
-    streamData.data?.stream
-        .transform(unit8Transformer)
-        .transform(const Utf8Decoder())
-        .transform(const LineSplitter())
-        .listen((event) {
-      logger.d("gptStream:$event");
-      text = "$text$event\n";
-    }).onDone(() {
-      MessageModel messageModel = MessageModel(
-          text: text,
-          dateTime: DateTime.now(),
-          isSentByMe: false,
-          newMassage: true);
+      StreamTransformer<Uint8List, List<int>> unit8Transformer =
+          StreamTransformer.fromHandlers(
+        handleData: (data, sink) {
+          sink.add(List<int>.from(data));
+        },
+      );
+      streamData.data?.stream
+          .transform(unit8Transformer)
+          .transform(const Utf8Decoder())
+          .transform(const LineSplitter())
+          .listen((event) {
+        logger.d("gptStream:$event");
+        text = "$text$event\n";
+      }).onDone(() {
+        MessageModel messageModel = MessageModel(
+            text: text,
+            dateTime: DateTime.now(),
+            isSentByMe: false,
+            newMassage: true);
 
-      _model.messages.add(messageModel);
-      //로딩 종료 업데이트
-      _model.gptLoding = false;
+        _model.messages.add(messageModel);
+        //로딩 종료 업데이트
+        _model.gptLoding = false;
 
-      //gpt 메세지 sqllite에 저장
-      saveGptMassage(text);
+        //gpt 메세지 sqllite에 저장
+        saveGptMassage(text);
 
-      update();
-    });
+        update();
+      });
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 403) {
+        logger.d("에러 코드:${e.response?.statusCode}");
+        logger.d("에러 코드:${e.message}");
+        _model.gptLoding = false;
+        update();
+        Get.toNamed("/purchasesPage");
+      }
+    }
 
     //로딩 종료 업데이트
     // _model.gptLoding = false;

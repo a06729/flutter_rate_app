@@ -196,6 +196,13 @@ class _ChatPageState extends State<ChatPage> {
                             : message.newMassage
                                 ? AnimatedTextKit(
                                     repeatForever: false,
+                                    displayFullTextOnTap: true,
+                                    onTap: () {
+                                      //새로운 메세지만 애니메이션 실행하고
+                                      //기존의 이미지면 애니메이션 실행 안하도록하는것
+                                      chatPageController
+                                          .messages.last.newMassage = false;
+                                    },
                                     animatedTexts: [
                                       TyperAnimatedText(message.text,
                                           speed:

@@ -326,6 +326,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 } else {
                   Get.toNamed("/loginPage");
                 }
+              } else if (index == 3) {
+                if (FirebaseAuth.instance.currentUser != null) {
+                  Get.toNamed("/purchasesPage");
+                } else {
+                  Get.toNamed("/loginPage");
+                }
               }
             },
             items: [
@@ -350,6 +356,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ),
                 label: '프로필',
               ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(
+              //     Icons.shopping_bag,
+              //     color: value.darkMod ? Colors.white : Colors.black,
+              //   ),
+              //   label: '쇼핑',
+              // ),
             ]),
       ),
     );

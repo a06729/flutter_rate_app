@@ -1,6 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:exchange_rate_app/services/purchase_api.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:lottie/lottie.dart';
 import '../widgets/pay_wall_widget.dart';
 
 class PurchasesPage extends StatefulWidget {
@@ -11,27 +19,140 @@ class PurchasesPage extends StatefulWidget {
 }
 
 class _PurchasesPageState extends State<PurchasesPage> {
+  late StreamSubscription<List<PurchaseDetails>> _subscription;
+
+  Future<void> paymentServerSave(Map<String, dynamic> verificationData) async {
+    final String baseUrl = dotenv.get("SERVER_URL");
+    final User? userInstance = FirebaseAuth.instance.currentUser;
+    final String? userUid = userInstance?.uid;
+    final String? userEmaill = userInstance?.email;
+    logger.d("uid:$userUid");
+    final dio = Dio();
+    await dio.post(
+      '$baseUrl/payment/itemSave',
+      data: {
+        "userUid": userUid,
+        "userEmail": userEmaill,
+        "orderId": verificationData['orderId'],
+        "packageName": verificationData['packageName'],
+        "productId": verificationData['productId'],
+        "purchaseTime": verificationData['purchaseTime'],
+        "purchaseState": verificationData['purchaseState'],
+        "purchaseToken": verificationData['purchaseToken'],
+        "quantity": verificationData['quantity']
+      },
+    );
+  }
+
+  void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+    purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
+      switch (purchaseDetails.status) {
+        case PurchaseStatus.pending:
+          break;
+        case PurchaseStatus.purchased:
+        case PurchaseStatus.restored:
+          break;
+        case PurchaseStatus.error:
+          logger.d("결제에러:${purchaseDetails.error}");
+          break;
+        default:
+          break;
+      }
+      logger.d(
+          "pendingCompletePurchase:${purchaseDetails.pendingCompletePurchase}");
+      if (purchaseDetails.pendingCompletePurchase) {
+        await InAppPurchase.instance.completePurchase(purchaseDetails);
+        final verificationDataJson =
+            json.decode(purchaseDetails.verificationData.localVerificationData);
+        await paymentServerSave(verificationDataJson);
+        return;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    final Stream<List<PurchaseDetails>> purchaseUpdated =
+        InAppPurchase.instance.purchaseStream;
+    _subscription = purchaseUpdated.listen((purchaseDetailsList) {
+      // logger.d("purchaseDetailsList:${purchaseDetailsList}");
+      _listenToPurchaseUpdated(purchaseDetailsList);
+    }, onDone: () {
+      _subscription.cancel();
+    }, onError: (error) {
+      // handle error here.
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-              onPressed: () async {
-                // final List<ProductDetails> productDetails =
-                //     await PurchaseApi.fetch();
-                await fetchOffers();
-                // PurchaseParam purchaseParam =
-                //     PurchaseParam(productDetails: productDetails[0]);
-                // await InAppPurchase.instance
-                //     .buyConsumable(purchaseParam: purchaseParam);
+            FutureBuilder(
+              future: fetchOffers(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData == false) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      Lottie.asset(
+                        'assets/lottie/pyment_required.json',
+                        height: 300,
+                        fit: BoxFit.fill,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text("코인이 부족합니다 충전이 필요합니다"),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        primary: false,
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          final package = snapshot.data[index];
+                          return buildPackage(context, package);
+                        },
+                      ),
+                    ],
+                  );
+                }
               },
-              child: Text("상품"),
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildPackage(BuildContext context, ProductDetails package) {
+    return Card(
+      child: ListTile(
+        title: Text(package.title),
+        subtitle: Text(package.description),
+        trailing: Text(package.price),
+        onTap: () async => await PurchaseApi.purchasePackage(package),
       ),
     );
   }
@@ -55,14 +176,11 @@ class _PurchasesPageState extends State<PurchasesPage> {
   Future fetchOffers() async {
     final offerings = await PurchaseApi().fetch();
     if (offerings.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("아이템이 없습니다."),
-        ),
-      );
+      return [];
     } else {
       final packages = offerings;
-      showSheet(packages);
+      return packages;
+      // showSheet(packages);
     }
   }
 }

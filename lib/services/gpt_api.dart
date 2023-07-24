@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -34,28 +35,22 @@ class GptApi {
   Future<Response<ResponseBody>> getStreamChatApi(
       {required String message}) async {
     String url = dotenv.get("SERVER_URL");
+    final User? userInstance = FirebaseAuth.instance.currentUser;
+
     Response<ResponseBody> rs = await Dio().post<ResponseBody>(
       "$url/gpt/chat/stream/$message",
-      options: Options(headers: {
-        "Accept": "text/event-stream",
-        "Cache-Control": "no-cache",
-      }, responseType: ResponseType.stream), // set responseType to `stream`
+      data: {
+        "uid": userInstance?.uid,
+        "email": userInstance?.email,
+      },
+      options: Options(
+        headers: {
+          "Accept": "text/event-stream",
+          "Cache-Control": "no-cache",
+        },
+        responseType: ResponseType.stream,
+      ), // set responseType to `stream`
     );
-
-    // StreamTransformer<Uint8List, List<int>> unit8Transformer =
-    //     StreamTransformer.fromHandlers(
-    //   handleData: (data, sink) {
-    //     sink.add(List<int>.from(data));
-    //   },
-    // );
-
-    // rs.data?.stream
-    //     .transform(unit8Transformer)
-    //     .transform(const Utf8Decoder())
-    //     .transform(const LineSplitter())
-    //     .listen((event) {
-    //   // logger.d("gptStream:${event}");
-    // });
 
     return rs;
   }
