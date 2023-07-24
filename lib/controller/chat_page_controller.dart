@@ -9,7 +9,6 @@ import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
 class ChatPageController extends ChangeNotifier {
   late final ChatPageModel _model;
@@ -164,21 +163,16 @@ class ChatPageController extends ChangeNotifier {
         update();
       });
     } on DioException catch (e) {
+      //서버에서 403에러를 보내는 경우 코인이 부족하다는 것을 의미
       if (e.response?.statusCode == 403) {
         logger.d("에러 코드:${e.response?.statusCode}");
         logger.d("에러 코드:${e.message}");
+        //채팅 페이지의 로딩을 종료
         _model.gptLoding = false;
         update();
+        //결제화면으로 이동
         Get.toNamed("/purchasesPage");
       }
     }
-
-    //로딩 종료 업데이트
-    // _model.gptLoding = false;
-
-    //gpt 메세지 sqllite에 저장
-    // saveGptMassage(gptMsg);
-
-    // update();
   }
 }

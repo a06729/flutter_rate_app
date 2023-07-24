@@ -17,6 +17,8 @@ class ChatPageModel {
   //현재페이지
   int _currentPage = 1;
 
+  // gpt 요청시 코인이 없으면 에러가 보내오는데
+  // 코인이 있는지 없는지 판별하는 에러
   bool _gptRequestError = false;
 
   get gptMessage => _gptMessage;
