@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:exchange_rate_app/controller/payment_controller.dart';
 import 'package:exchange_rate_app/screens/email_form_page.dart';
 import 'package:exchange_rate_app/screens/profile_page.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
@@ -74,11 +75,10 @@ Future<void> main() async {
       ),
       ChangeNotifierProvider.value(
         value: LoginController(),
+      ),
+      ChangeNotifierProvider.value(
+        value: PaymentController(),
       )
-
-      // ChangeNotifierProvider.value(
-      //   value: ChatPageController(),
-      // )
     ],
     child: const MyApp(),
   ));

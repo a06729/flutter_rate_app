@@ -1,3 +1,4 @@
+// import 'package:exchange_rate_app/controller/payment_controller.dart';
 import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/services/firebase_auth_remote.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
@@ -19,11 +20,13 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late TheamController theamController;
+  // late PaymentController _paymentController;
   late FireBaseAuthRemote _fireBaseAuthRemote;
   @override
   void initState() {
     theamController = Provider.of<TheamController>(context, listen: false);
     _fireBaseAuthRemote = FireBaseAuthRemote();
+    // _paymentController = Provider.of<PaymentController>(context, listen: false);
     super.initState();
   }
 
@@ -167,18 +170,23 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  showSheet(List<ProductDetails> packages) {
+  showSheet(List<ProductDetails> packages) async {
     return showModalBottomSheet(
+      // enableDrag: _paymentController.paymentLodding == false ? false : true,
+      // isDismissible: _paymentController.paymentLodding == false ? false : true,
       context: context,
       builder: (context) {
-        return PaywllWidget(
-          packages: packages,
-          title: '',
-          description: '',
-          onClickedPackage: (packages) async {
-            //purchasePackage함수를 실행해서 구매 정보를 추출하기 위한 함수
-            await PurchaseApi.purchasePackage(packages);
-          },
+        return SizedBox(
+          height: 500,
+          child: PaywllWidget(
+            packages: packages,
+            title: '',
+            description: '',
+            onClickedPackage: (packages) async {
+              //purchasePackage함수를 실행해서 구매 정보를 추출하기 위한 함수
+              await PurchaseApi.purchasePackage(packages);
+            },
+          ),
         );
       },
     );

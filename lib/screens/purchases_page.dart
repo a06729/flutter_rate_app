@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
@@ -19,7 +18,7 @@ class PurchasesPage extends StatefulWidget {
 }
 
 class _PurchasesPageState extends State<PurchasesPage> {
-  late StreamSubscription<List<PurchaseDetails>> _subscription;
+  // late StreamSubscription<List<PurchaseDetails>> _subscription;
 
   Future<void> paymentServerSave(Map<String, dynamic> verificationData) async {
     final String baseUrl = dotenv.get("SERVER_URL");
@@ -44,50 +43,50 @@ class _PurchasesPageState extends State<PurchasesPage> {
     );
   }
 
-  void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
-    purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
-      switch (purchaseDetails.status) {
-        case PurchaseStatus.pending:
-          break;
-        case PurchaseStatus.purchased:
-        case PurchaseStatus.restored:
-          break;
-        case PurchaseStatus.error:
-          logger.d("결제에러:${purchaseDetails.error}");
-          break;
-        default:
-          break;
-      }
-      logger.d(
-          "pendingCompletePurchase:${purchaseDetails.pendingCompletePurchase}");
-      if (purchaseDetails.pendingCompletePurchase) {
-        final verificationDataJson =
-            json.decode(purchaseDetails.verificationData.localVerificationData);
-        await paymentServerSave(verificationDataJson).then((value) async =>
-            await InAppPurchase.instance.completePurchase(purchaseDetails));
-        return;
-      }
-    });
-  }
+  // void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+  //   purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
+  //     switch (purchaseDetails.status) {
+  //       case PurchaseStatus.pending:
+  //         break;
+  //       case PurchaseStatus.purchased:
+  //       case PurchaseStatus.restored:
+  //         break;
+  //       case PurchaseStatus.error:
+  //         logger.d("결제에러:${purchaseDetails.error}");
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //     logger.d(
+  //         "pendingCompletePurchase_purchasesPage:${purchaseDetails.pendingCompletePurchase}");
+  //     if (purchaseDetails.pendingCompletePurchase) {
+  //       final verificationDataJson =
+  //           json.decode(purchaseDetails.verificationData.localVerificationData);
+  //       await paymentServerSave(verificationDataJson).then((value) async =>
+  //           await InAppPurchase.instance.completePurchase(purchaseDetails));
+  //       return;
+  //     }
+  //   });
+  // }
 
   @override
   void initState() {
-    final Stream<List<PurchaseDetails>> purchaseUpdated =
-        InAppPurchase.instance.purchaseStream;
-    _subscription = purchaseUpdated.listen((purchaseDetailsList) {
-      // logger.d("purchaseDetailsList:${purchaseDetailsList}");
-      _listenToPurchaseUpdated(purchaseDetailsList);
-    }, onDone: () {
-      _subscription.cancel();
-    }, onError: (error) {
-      // handle error here.
-    });
+    // final Stream<List<PurchaseDetails>> purchaseUpdated =
+    //     InAppPurchase.instance.purchaseStream;
+    // _subscription = purchaseUpdated.listen((purchaseDetailsList) {
+    //   // logger.d("purchaseDetailsList:${purchaseDetailsList}");
+    //   // _listenToPurchaseUpdated(purchaseDetailsList);
+    // }, onDone: () {
+    //   _subscription.cancel();
+    // }, onError: (error) {
+    //   // handle error here.
+    // });
     super.initState();
   }
 
   @override
   void dispose() {
-    _subscription.cancel();
+    // _subscription.cancel();
     super.dispose();
   }
 
