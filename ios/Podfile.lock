@@ -129,6 +129,8 @@ PODS:
     - sqlite3/rtree
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
+  - workmanager (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
@@ -144,6 +146,7 @@ DEPENDENCIES:
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
+  - workmanager (from `.symlinks/plugins/workmanager/ios`)
 
 SPEC REPOS:
   trunk:
@@ -192,6 +195,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
   webview_flutter_wkwebview:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
+  workmanager:
+    :path: ".symlinks/plugins/workmanager/ios"
 
 SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
@@ -224,6 +229,7 @@ SPEC CHECKSUMS:
   sqlite3: fd89671d969f3e73efe503ce203e28b016b58f68
   sqlite3_flutter_libs: 04ba0d14a04335a2fbf9a331e8664f401fbccdd5
   webview_flutter_wkwebview: 2e2d318f21a5e036e2c3f26171342e95908bd60a
+  workmanager: 0afdcf5628bbde6924c21af7836fed07b42e30e6
 
 PODFILE CHECKSUM: ffa763318d4c8638db3501026b3a5ec56935bfb5
 

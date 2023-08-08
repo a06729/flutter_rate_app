@@ -5,7 +5,6 @@ import 'package:exchange_rate_app/controller/payment_controller.dart';
 import 'package:exchange_rate_app/screens/email_form_page.dart';
 import 'package:exchange_rate_app/screens/profile_page.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
