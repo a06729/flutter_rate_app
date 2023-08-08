@@ -79,7 +79,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               leading: const Icon(Icons.shopping_cart),
                               title: const Text("코인 샵"),
                               onTap: () async {
-                                await _fetchOffers();
+                                // await _fetchOffers();
+                                Get.toNamed('/purchasesPage');
                               },
                               trailing: const Icon(Icons.navigate_next),
                             )

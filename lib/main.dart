@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/controller/payment_controller.dart';
 import 'package:exchange_rate_app/screens/email_form_page.dart';
 import 'package:exchange_rate_app/screens/profile_page.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:exchange_rate_app/controller/chat_page_controller.dart';
 import 'package:exchange_rate_app/controller/keybord_amonut_controller.dart';
@@ -26,9 +28,79 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:provider/provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:get/get.dart';
+import 'package:workmanager/workmanager.dart';
+
+Future<void> paymentServerSave(
+    String baseUrl, Map<String, dynamic>? verificationData) async {
+  final String baseUrl = dotenv.get("SERVER_URL");
+  logger.d("uid:$verificationData?['userUid']");
+  final dio = Dio();
+  await dio.post(
+    '$baseUrl/payment/itemSave',
+    data: {
+      "userUid": verificationData?['userUid'],
+      "userEmail": verificationData?['userEmaill'],
+      "orderId": verificationData?['orderId'],
+      "packageName": verificationData?['packageName'],
+      "productId": verificationData?['productId'],
+      "purchaseTime": verificationData?['purchaseTime'],
+      "purchaseState": verificationData?['purchaseState'],
+      "purchaseToken": verificationData?['purchaseToken'],
+      "quantity": verificationData?['quantity']
+    },
+  );
+}
+
+@pragma('vm:entry-point')
+//워크매니저의 실행을 관리해주는 함수 정의
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    logger.d("Native called background task: $task");
+    logger.d("inputData:$inputData");
+    //테스크 이름이 patmentTask일때 실행
+    if (task == "paymentTask") {
+      //워크매니저에서는 객체가 메모리에 독립적으로 있으므로 dotenv를 다시 불러와줘야 한다.
+      if (kReleaseMode) {
+        logger.d("릴리즈 mode");
+        await dotenv.load(fileName: "assets/.env");
+      } else {
+        await dotenv.load(fileName: "assets/.env_development");
+        logger.d('디버깅 mode');
+      }
+      final String baseUrl = dotenv.get("SERVER_URL");
+      await paymentServerSave(
+        baseUrl,
+        inputData!,
+      );
+      //Future.value로 true를 리턴해줘야 workerManger가 성공적으로 기능을 수행했다고
+      //알려주기위해서 return으로 true를 보내줘야한다.
+      return Future.value(true);
+    }
+    return Future.value(true);
+  });
+}
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  if (kReleaseMode) {
+    // Is Release Mode??
+    logger.d("릴리즈 mode");
+    await dotenv.load(fileName: "assets/.env");
+    //Workmanager를 초기화 해줘서 매니저 등록을 해준다.
+    Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: false,
+    );
+  } else {
+    // HttpOverrides.global = MyHttpOverrides();
+    logger.d('디버깅 mode');
+    await dotenv.load(fileName: "assets/.env_development");
+    //Workmanager를 초기화 해줘서 매니저 등록을 해준다.
+    Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: true,
+    );
+  }
 
   KakaoSdk.init(
       nativeAppKey: '2e7ffbc174951dde4da1016d119d72db',
@@ -38,20 +110,11 @@ Future<void> main() async {
 
   MobileAds.instance.initialize();
   await Firebase.initializeApp();
+
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Hive.initFlutter();
   Hive.registerAdapter(RateModelAdapter());
-
-  if (kReleaseMode) {
-    // Is Release Mode??
-    logger.d("릴리즈 mode");
-    await dotenv.load(fileName: "assets/.env");
-  } else {
-    HttpOverrides.global = MyHttpOverrides();
-    await dotenv.load(fileName: "assets/.env_development");
-    logger.d('디버깅 mode');
-  }
 
   runApp(MultiProvider(
     providers: [
