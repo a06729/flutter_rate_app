@@ -33,10 +33,10 @@ class ChatPageModel {
 
   set messages(List<MessageModel> newMessages) => _messages = newMessages;
 
-  Future<Response<ResponseBody>> getGptStreamApi(String message) async {
-    var streamRespons = await GptApi().getStreamChatApi(message: message);
-    return streamRespons;
-  }
+  // Future<Response<ResponseBody>> getGptStreamApi(String message) async {
+  //   var streamRespons = await GptApi().getStreamChatApi(message: message);
+  //   return streamRespons;
+  // }
 
   Future<String> getGptApi(String message) async {
     _gptMessage = await GptApi()?.getChatApi(message: message);

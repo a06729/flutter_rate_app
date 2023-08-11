@@ -1,15 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/db/app_db.dart';
 import 'package:exchange_rate_app/model/chat_page_model.dart';
-import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:exchange_rate_app/widgets/model/message_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart' as drift;
-import 'package:get/get.dart';
 
+//
 class ChatPageController extends ChangeNotifier {
   late final ChatPageModel _model;
   AppDb? _appDb;
@@ -117,62 +112,82 @@ class ChatPageController extends ChangeNotifier {
     update();
   }
 
-  //gpt api의 값을 불러워서 ui에 반영하는 함수
-  Future<void> getGptApi(String message) async {
-    String text = "";
-
-    _model.gptLoding = true;
-
-    //유제 메세지 화면에 업데이트
-    addMessage(message, true);
-
-    //유저 메세지 sqlite에 저장
-    saveUserMassage(message);
-
-    // String gptMsg = await _model.getGptApi(message);
-    try {
-      var streamData = await _model.getGptStreamApi(message);
-
-      StreamTransformer<Uint8List, List<int>> unit8Transformer =
-          StreamTransformer.fromHandlers(
-        handleData: (data, sink) {
-          sink.add(List<int>.from(data));
-        },
-      );
-      streamData.data?.stream
-          .transform(unit8Transformer)
-          .transform(const Utf8Decoder())
-          .transform(const LineSplitter())
-          .listen((event) {
-        logger.d("gptStream:$event");
-        text = "$text$event\n";
-      }).onDone(() {
-        MessageModel messageModel = MessageModel(
-            text: text,
-            dateTime: DateTime.now(),
-            isSentByMe: false,
-            newMassage: true);
-
-        _model.messages.add(messageModel);
-        //로딩 종료 업데이트
-        _model.gptLoding = false;
-
-        //gpt 메세지 sqllite에 저장
-        saveGptMassage(text);
-
-        update();
-      });
-    } on DioException catch (e) {
-      //서버에서 403에러를 보내는 경우 코인이 부족하다는 것을 의미
-      if (e.response?.statusCode == 403) {
-        logger.d("에러 코드:${e.response?.statusCode}");
-        logger.d("에러 코드:${e.message}");
-        //채팅 페이지의 로딩을 종료
-        _model.gptLoding = false;
-        update();
-        //결제화면으로 이동
-        Get.toNamed("/purchasesPage");
-      }
-    }
+  //로딩ui 스위치
+  void gptLoddingSwitch(bool switchValue) {
+    _model.gptLoding = switchValue;
+    update();
   }
+
+  //gpt api의 값을 불러워서 ui에 반영하는 함수
+  // Future<void> getGptApi(String message) async {
+  //   String text = "";
+  //   int lastIndex = _model.messages.length;
+
+  //   _model.gptLoding = true;
+
+  //   //유제 메세지 화면에 업데이트
+  //   addMessage(message, true);
+
+  //   //유저 메세지 sqlite에 저장
+  //   saveUserMassage(message);
+
+  //   // String gptMsg = await _model.getGptApi(message);
+  //   try {
+  //     var streamData = await _model.getGptStreamApi(message);
+
+  //     StreamTransformer<Uint8List, List<int>> unit8Transformer =
+  //         StreamTransformer.fromHandlers(
+  //       handleData: (data, sink) {
+  //         sink.add(List<int>.from(data));
+  //       },
+  //     );
+  //     streamData.data?.stream
+  //         .transform(unit8Transformer)
+  //         .transform(const Utf8Decoder())
+  //         .transform(const LineSplitter())
+  //         .listen((event) {
+  //       logger.d("gptStream:$event");
+  //       text = "$text$event\n";
+  //       if (_model.messages[lastIndex + 1] == "") {
+  //         MessageModel messageModel = MessageModel(
+  //             text: text,
+  //             dateTime: DateTime.now(),
+  //             isSentByMe: false,
+  //             newMassage: false);
+  //         _model.messages[lastIndex + 1] = messageModel;
+  //       } else {
+  //         MessageModel messageModel = _model.messages.last;
+  //         messageModel.text = text;
+  //         _model.messages[lastIndex + 1] = messageModel;
+  //       }
+  //       update();
+  //     }).onDone(() {
+  //       // MessageModel messageModel = MessageModel(
+  //       //     text: text,
+  //       //     dateTime: DateTime.now(),
+  //       //     isSentByMe: false,
+  //       //     newMassage: true);
+
+  //       // _model.messages.add(messageModel);
+  //       //로딩 종료 업데이트
+  //       _model.gptLoding = false;
+
+  //       //gpt 메세지 sqllite에 저장
+  //       saveGptMassage(text);
+
+  //       update();
+  //     });
+  //   } on DioException catch (e) {
+  //     //서버에서 403에러를 보내는 경우 코인이 부족하다는 것을 의미
+  //     if (e.response?.statusCode == 403) {
+  //       logger.d("에러 코드:${e.response?.statusCode}");
+  //       logger.d("에러 코드:${e.message}");
+  //       //채팅 페이지의 로딩을 종료
+  //       _model.gptLoding = false;
+  //       update();
+  //       //결제화면으로 이동
+  //       Get.toNamed("/purchasesPage");
+  //     }
+  //   }
+  // }
 }

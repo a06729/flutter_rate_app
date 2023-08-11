@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:dio/dio.dart';
+// import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/services/logger_fn.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GptApi {
   final String baseUrl =
@@ -32,26 +32,26 @@ class GptApi {
     }
   }
 
-  Future<Response<ResponseBody>> getStreamChatApi(
-      {required String message}) async {
-    String url = dotenv.get("SERVER_URL");
-    final User? userInstance = FirebaseAuth.instance.currentUser;
+  // Future<Response<ResponseBody>> getStreamChatApi(
+  //     {required String message}) async {
+  //   String url = dotenv.get("SERVER_URL");
+  //   final User? userInstance = FirebaseAuth.instance.currentUser;
 
-    Response<ResponseBody> rs = await Dio().post<ResponseBody>(
-      "$url/gpt/chat/stream/$message",
-      data: {
-        "uid": userInstance?.uid,
-        "email": userInstance?.email,
-      },
-      options: Options(
-        headers: {
-          "Accept": "text/event-stream",
-          "Cache-Control": "no-cache",
-        },
-        responseType: ResponseType.stream,
-      ), // set responseType to `stream`
-    );
+  //   Response<ResponseBody> rs = await Dio().post<ResponseBody>(
+  //     "$url/gpt/chat/stream/$message",
+  //     data: {
+  //       "uid": userInstance?.uid,
+  //       "email": userInstance?.email,
+  //     },
+  //     options: Options(
+  //       headers: {
+  //         "Accept": "text/event-stream",
+  //         "Cache-Control": "no-cache",
+  //       },
+  //       responseType: ResponseType.stream,
+  //     ), // set responseType to `stream`
+  //   );
 
-    return rs;
-  }
+  //   return rs;
+  // }
 }

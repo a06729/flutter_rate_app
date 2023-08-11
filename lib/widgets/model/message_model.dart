@@ -1,5 +1,5 @@
 class MessageModel {
-  final String text;
+  String text;
   final DateTime dateTime;
   final bool isSentByMe;
   bool newMassage;
