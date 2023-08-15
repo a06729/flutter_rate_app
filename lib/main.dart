@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:exchange_rate_app/controller/payment_controller.dart';
 import 'package:exchange_rate_app/screens/email_form_page.dart';

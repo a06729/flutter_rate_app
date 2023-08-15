@@ -11,6 +11,7 @@ class FireBaseAuthRemote {
     // final test = await http.get(Uri.parse("https://www.google.com/"));
     // print("test:${test.body}");
     if (SocialType.kakao.text == user['platform']) {
+      //카카오 로그인
       final url = Uri.parse('$baseUrl/social/kakao/token');
       // print("user:${user}");
       final customTokenResponse = await http.post(
@@ -18,9 +19,10 @@ class FireBaseAuthRemote {
         headers: {"Content-Type": "application/json"},
         body: json.encode(user),
       );
-      logger.d("카카오톡 로그인 결과값:${customTokenResponse.body}");
-      return customTokenResponse.body;
+      logger.d("카카오톡 로그인 결과값:${utf8.decode(customTokenResponse.bodyBytes)}");
+      return utf8.decode(customTokenResponse.bodyBytes);
     } else {
+      //라인 로그인
       final url = Uri.parse('$baseUrl/social/line/token');
       // print("user:${user}");
       final customTokenResponse = await http.post(
@@ -28,7 +30,7 @@ class FireBaseAuthRemote {
         headers: {"Content-Type": "application/json"},
         body: json.encode(user),
       );
-
+      logger.d("라인 로그인 결과값:${utf8.decode(customTokenResponse.bodyBytes)}");
       return utf8.decode(customTokenResponse.bodyBytes);
     }
   }

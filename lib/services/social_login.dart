@@ -58,6 +58,7 @@ class SocialLogin {
             await FirebaseAuth.instance.signInWithCustomToken(jsonData.token);
             Get.offAllNamed('/');
           } else {
+            logger.d("로그인에러 메세지(snackbar):${jsonData.errorMessage}");
             Get.snackbar(
               "로그인 에러",
               jsonData.errorMessage!,
@@ -95,6 +96,7 @@ class SocialLogin {
             await FirebaseAuth.instance.signInWithCustomToken(jsonData.token);
             Get.offAllNamed('/');
           } else {
+            logger.d("로그인에러 메세지(snackbar):${jsonData.errorMessage}");
             Get.snackbar(
               "로그인 에러",
               jsonData.errorMessage!,
@@ -170,7 +172,7 @@ class SocialLogin {
           await FirebaseAuth.instance.signInWithCustomToken(jsonData.token);
           Get.offAllNamed('/');
         } else {
-          logger.d(jsonData.errorMessage);
+          logger.d("로그인에러 메세지:${jsonData.errorMessage}");
           Get.snackbar(
             "로그인 에러",
             jsonData.errorMessage!,
