@@ -1,10 +1,10 @@
 import 'package:exchange_rate_app/common/social_type.dart';
 import 'package:exchange_rate_app/controller/login_page_controller.dart';
 import 'package:exchange_rate_app/services/firebase_auth_remote.dart';
+import 'package:exchange_rate_app/services/logger_fn.dart';
 import 'package:exchange_rate_app/services/social_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
@@ -44,42 +44,42 @@ class _SocialSquareTitleState extends State<SocialSquareTitle> {
     await socialLogin.lineLogin();
   }
 
+  //google로그인 함수
   Future<void> signInWithGoogle() async {
-    try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
-        // Create a new credential
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
-        );
+    if (googleUser == null) {
+      throw Exception("Not logged in");
+    }
 
-        UserCredential userData =
-            await FirebaseAuth.instance.signInWithCredential(credential);
-        bool? newUser = userData.additionalUserInfo?.isNewUser;
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
 
-        if (newUser == true) {
-          final User? userInstance = FirebaseAuth.instance.currentUser;
-          Map<String, dynamic> userJson = {
-            "uid": userInstance?.uid,
-            "displayName": userInstance?.displayName,
-            "email": userInstance?.email,
-            "photoURL": userInstance?.photoURL,
-          };
-          await _fireBaseAuthRemote.initUserDataNonCustomToken(userJson);
-        }
+    if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-        Get.offAllNamed('/');
+      UserCredential userData =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      bool? newUser = userData.additionalUserInfo?.isNewUser;
+
+      if (newUser == true) {
+        final User? userInstance = FirebaseAuth.instance.currentUser;
+        Map<String, dynamic> userJson = {
+          "uid": userInstance?.uid,
+          "displayName": userInstance?.displayName,
+          "email": userInstance?.email,
+          "photoURL": userInstance?.photoURL,
+        };
+        await _fireBaseAuthRemote.initUserDataNonCustomToken(userJson);
       }
-    } on FirebaseAuthException catch (error) {
-      throw FirebaseAuthException(code: error.code);
-    } on PlatformException catch (error) {
-      throw PlatformException(code: error.code);
+
+      Get.offAllNamed('/');
     }
   }
 
@@ -102,7 +102,12 @@ class _SocialSquareTitleState extends State<SocialSquareTitle> {
                   (value) => loginController.loginLodding(false),
                 )
                 .onError(
-                  (error, stackTrace) => loginController.loginLodding(false),
+                  (error, stackTrace) async => {
+                    logger.d("구글 로그인 에러:${error}"),
+                    await socialLogin.googleLogout(),
+                    await FirebaseAuth.instance.signOut(),
+                    loginController.loginLodding(false)
+                  },
                 );
           } else if (widget.socialType.text == SocialType.kakao.text) {
             loginController.loginLodding(true);

@@ -2,6 +2,7 @@ import 'package:exchange_rate_app/controller/theam_controller.dart';
 import 'package:exchange_rate_app/services/social_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,7 +27,11 @@ class _SideMenuState extends State<SideMenu> {
     final User user = auth.currentUser!;
     final uid = user.uid;
     if (uid.contains("kakao")) {
-      SocialLogin().kakaologout();
+      await SocialLogin().kakaologout();
+    } else if (uid.contains("line")) {
+      await SocialLogin().lineLogout();
+    } else {
+      await SocialLogin().googleLogout();
     }
     await FirebaseAuth.instance.signOut();
   }

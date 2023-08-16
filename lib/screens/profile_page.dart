@@ -36,6 +36,10 @@ class _ProfilePageState extends State<ProfilePage> {
     final uid = user.uid;
     if (uid.contains("kakao")) {
       SocialLogin().kakaologout();
+    } else if (uid.contains("line")) {
+      await SocialLogin().lineLogout();
+    } else {
+      await SocialLogin().googleLogout();
     }
     await FirebaseAuth.instance.signOut();
     Get.toNamed("/");
@@ -201,17 +205,17 @@ class _ProfilePageState extends State<ProfilePage> {
     return userCoinAmount;
   }
 
-  Future _fetchOffers() async {
-    final offerings = await PurchaseApi().fetch();
-    if (offerings.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("아이템이 없습니다."),
-        ),
-      );
-    } else {
-      final packages = offerings;
-      showSheet(packages);
-    }
-  }
+  // Future _fetchOffers() async {
+  //   final offerings = await PurchaseApi().fetch();
+  //   if (offerings.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text("아이템이 없습니다."),
+  //       ),
+  //     );
+  //   } else {
+  //     final packages = offerings;
+  //     showSheet(packages);
+  //   }
+  // }
 }

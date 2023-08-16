@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:get/get.dart';
 
@@ -125,7 +126,23 @@ class SocialLogin {
     try {
       await kakao.UserApi.instance.unlink();
     } catch (error) {
-      logger.d("로그아웃에러:$error");
+      logger.d("카카오 로그아웃에러:$error");
+    }
+  }
+
+  Future<void> lineLogout() async {
+    try {
+      await LineSDK.instance.logout();
+    } on PlatformException catch (e) {
+      logger.d("라인 로그아웃 에러:${e.message}");
+    }
+  }
+
+  Future<void> googleLogout() async {
+    try {
+      await GoogleSignIn().signOut();
+    } on PlatformException catch (e) {
+      logger.d("구글 로그아웃 에러:${e.message}");
     }
   }
 
