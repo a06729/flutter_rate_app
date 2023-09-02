@@ -69,7 +69,7 @@ class _ChatPageState extends State<ChatPage> {
       options: Options(
         headers: {
           "Accept": "text/event-stream",
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-store,no-cache,must-revalidate",
         },
         responseType: ResponseType.stream,
       ), // set responseType to `stream`
