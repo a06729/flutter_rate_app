@@ -42,8 +42,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   );
 
   double spaceBetween = 10.0;
-  final _duration = Duration(milliseconds: 200);
-  bool _reorderItem = false;
 
   _onStartScroll(ScrollMetrics metrics) {
     // if you need to do something at the start
@@ -127,7 +125,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       builder: (context, value, child) {
         return Scaffold(
           key: _scaffoldKey,
-          drawer: const SideMenu(),
+          // drawer: const SideMenu(),
           backgroundColor:
               value.darkMod ? bgBlack : const Color.fromRGBO(255, 248, 243, 1),
           extendBodyBehindAppBar: false,
@@ -138,19 +136,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             systemOverlayStyle: theamController.darkMod
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
-            leading: IconButton(
-              icon: const Icon(Icons.menu_rounded),
-              color: theamController.darkMod ? Colors.white : Colors.black,
-              onPressed: () {
-                if (_scaffoldKey.currentState!.isDrawerOpen) {
-                  _scaffoldKey.currentState!.closeDrawer();
-                  //close drawer, if drawer is open
-                } else {
-                  _scaffoldKey.currentState!.openDrawer();
-                  //open drawer, if drawer is closed
-                }
-              },
-            ),
+            // leading: IconButton(
+            //   icon: const Icon(Icons.menu_rounded),
+            //   color: theamController.darkMod ? Colors.white : Colors.black,
+            //   onPressed: () {
+            //     if (_scaffoldKey.currentState!.isDrawerOpen) {
+            //       _scaffoldKey.currentState!.closeDrawer();
+            //       //close drawer, if drawer is open
+            //     } else {
+            //       _scaffoldKey.currentState!.openDrawer();
+            //       //open drawer, if drawer is closed
+            //     }
+            //   },
+            // ),
             actions: [
               Expanded(
                 child: Row(

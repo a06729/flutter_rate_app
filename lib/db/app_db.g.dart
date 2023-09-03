@@ -27,15 +27,12 @@ class $ChatMessageTable extends ChatMessage
   static const VerificationMeta _myMessageMeta =
       const VerificationMeta('myMessage');
   @override
-  late final GeneratedColumn<bool> myMessage =
-      GeneratedColumn<bool>('my_message', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: true,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("my_message" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }));
+  late final GeneratedColumn<bool> myMessage = GeneratedColumn<bool>(
+      'my_message', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("my_message" IN (0, 1))'));
   static const VerificationMeta _messageDateTimeMeta =
       const VerificationMeta('messageDateTime');
   @override
