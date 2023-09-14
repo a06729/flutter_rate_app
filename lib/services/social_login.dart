@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:get/get.dart';
 
@@ -115,6 +116,13 @@ class SocialLogin {
           await FirebaseAuth.instance.signOut();
         }
       }
+    } on KakaoClientException catch (e) {
+      logger.d('에러:${e.msg}');
+      if (e.msg == "authentication token doesn't exist.") {
+        logger.d("로그인 취소");
+        Get.snackbar("카카오톡 로그인 취소", "카카오톡 로그인 취소 하셨습니다.",
+            snackPosition: SnackPosition.BOTTOM);
+      }
     } catch (e) {
       logger.d("로그인에러:$e");
       await kakao.UserApi.instance.unlink();
@@ -200,7 +208,15 @@ class SocialLogin {
         }
       }
     } on PlatformException catch (e) {
-      logger.d("line 로그인 에러:${e.toString()}");
+      if (e.code == "CANCEL") {
+        logger.d("line 로그인 취소:${e.code}");
+        Get.snackbar(
+          "라인 로그인 취소",
+          "라인 로그인을 취소 하셨습니다.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+      logger.d("line 로그인 에러:${e.code}");
     }
   }
 }
